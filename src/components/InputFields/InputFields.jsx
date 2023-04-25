@@ -1,12 +1,13 @@
 import React from "react";
-import "./inputFields.css";
+
 export const InputFields = (props) => {
-  const { label, ...attributes } = props;
+  const { label, name, ...attributes } = props;
+  console.log(props.name);
   return (
     <div className="section-row">
-      <label htmlFor="">{label}</label>
+      <label htmlFor={name}>{label}</label>
       <div className="inputComp">
-        <input className="inputs" {...attributes} />
+        <input className="inputs" name={name} {...attributes} />
       </div>
     </div>
   );

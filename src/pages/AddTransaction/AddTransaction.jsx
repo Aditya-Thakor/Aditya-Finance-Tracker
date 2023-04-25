@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { DropDownlist } from "../../components/DropDownList/DropDownlist";
 import { InputFields } from "../../components/InputFields/InputFields";
 import "./css/addTransaction.css";
 const AddTransaction = () => {
+  const InitialValues = {
+    transactiondate: "",
+    transactionMY: "",
+    transactionType: "",
+    transactionFrom: "",
+    transactionTo: "",
+    transactionamount: "",
+    transactionreceipt: "",
+  };
+
+  const [values, setValues] = useState([]);
+
   const selectField = {
     1: {
       name: "transactionMY",
@@ -74,7 +86,7 @@ const AddTransaction = () => {
       placeholder: "Enter Amount",
     },
     {
-      label: "Enter Transaction Receipt : ",
+      label: "Upload Transaction Receipt : ",
       type: "file",
       name: "transactionreceipt",
     },
