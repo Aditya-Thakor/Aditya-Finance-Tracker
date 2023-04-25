@@ -1,0 +1,28 @@
+.container{
+    display: flex;
+    justify-content: center ;
+    margin-top: 50px;
+    
+}
+.section{
+    padding: 10px 20px 0px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border: 1px solid;
+}
+.section-row{
+    padding: 10px;
+    width: 500px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.inputs{
+    height: 30px;
+    width: 230px;
+}
+
+.inputs-textarea{
+
+    height: 50px;
+    width: 230px;
+}
