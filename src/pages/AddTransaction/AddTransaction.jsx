@@ -90,9 +90,9 @@ const AddTransaction = () => {
       placeholder: "Enter Amount",
     },
     {
+      name: "transactionReceipt",
       label: "Upload Transaction Receipt : ",
       type: "file",
-      name: "transactionReceipt",
     },
   ];
 
@@ -104,31 +104,40 @@ const AddTransaction = () => {
     }
   };
 
-  // let getvalue = JSON.parse(localStorage.getItem("value"));
-  // console.log(getvalue);
-  // let print = [getvalue, values];
-  // let obj = JSON.stringify(print);
-  // localStorage.setItem("value", obj);
-  // console.log(print);
-
-  useEffect(() => {
-    // console.log(getvalue);
-  });
-
   useEffect(() => {
     if (btnClick) {
       let getvalue = JSON.parse(localStorage.getItem("value"));
-
       getvalue != null ? getvalue.push(values) : (getvalue = [values]);
-
       localStorage.setItem("value", JSON.stringify(getvalue));
-
       navigate("/viewTransaction");
     }
   }, [btnClick]);
 
   const onchange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
+    const name = e.target.name;
+    let value = e.target.value;
+    let file;
+
+    if (name === "transactionReceipt") {
+      let files = e.target.files[0];
+      console.log(files.type);
+      if (files.size > 1000000) alert("size exceed");
+      if (
+        files.type == "image/jpg" ||
+        files.type == "image/png" ||
+        files.type == "image/jpeg"
+      ) {
+        file = new FileReader();
+        file.readAsDataURL(files);
+        file.onloadend = () => {
+          setValues({ ...values, [name]: file.result });
+        };
+      } else {
+        alert("type not match");
+      }
+    } else {
+      setValues({ ...values, [name]: value });
+    }
   };
   return (
     <form action="" method="post">

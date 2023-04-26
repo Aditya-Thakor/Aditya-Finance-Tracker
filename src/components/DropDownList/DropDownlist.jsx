@@ -15,7 +15,7 @@ export const DropDownlist = (props) => {
           ))}
         </select>
       </div>
-      <label htmlFor="">A</label>
+      <label htmlFor="">a</label>
     </>
   );
 };
