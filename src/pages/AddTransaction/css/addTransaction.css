@@ -2,16 +2,15 @@
     display: flex;
     justify-content: center ;
     margin-top: 50px;
-    
+    border: 1px solid;    
+
 }
 .section{
     padding: 10px 20px 0px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    border: 1px solid;
+    width: 1000px;
 }
 .section-row{
     padding: 10px;
-    width: 500px;
     display: flex;
     justify-content: space-between;
 }
