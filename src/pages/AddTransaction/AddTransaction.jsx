@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DropDownlist } from "../../components/DropDownList/DropDownlist";
 import { InputFields } from "../../components/InputFields/InputFields";
-import { json, useNavigate } from "react-router-dom";
+import { json, useNavigate, Link } from "react-router-dom";
 import "./css/addTransaction.css";
 const AddTransaction = () => {
   const navigate = useNavigate();
@@ -141,6 +141,7 @@ const AddTransaction = () => {
   };
   return (
     <form action="" method="post">
+      <Link to="/viewTransaction">View Transaction</Link>
       <div className="container">
         <div className="section">
           <InputFields

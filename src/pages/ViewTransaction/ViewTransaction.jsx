@@ -1,51 +1,56 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./css/viewTrans.css";
 const ViewTransaction = () => {
-  let storageValues = JSON.parse(localStorage.getItem("value"));
+  const storageValues = JSON.parse(localStorage.getItem("value"));
 
+  // Hooks
+  const [locals, setLocal] = useState(storageValues);
+  const [Lastfiled, setLastfield] = useState("");
+  let ref = useRef(false);
+
+  // Initials
   let th = [
     { name: "transactionDate", text: "Transaction Date" },
     { name: "transactionMY", text: "Month Year" },
     { name: "transactionType", text: "Transaction Type" },
+
     { name: "transactionFrom", text: "From Account" },
     { name: "transactionTo", text: "To Account" },
     { name: "transactionAmount", text: "Transaction Amount" },
     { name: "transactionReceipt", text: "Transaction Receipt" },
     { name: "transactionNotes", text: "Transaction Note" },
-    { name: "", text: "Action" },
   ];
-
-  let aa = [
-    { name: "sad", value: "sad" },
-    { name: "sad", value: "sad" },
-    { name: "sad", value: "sad" },
-  ];
-  // aa.map((item) => {
-  //   console.log(item.name);
-  // });
-
-  let array = [];
 
   const FuncSort = (e) => {
     let field = e.target.nonce;
-    let appending = [];
 
-    storageValues.map((item) => {
-      console.log(item);
+    if (Lastfiled !== field) {
+      ref.current = false;
+    }
 
-      // appending.push(Object.entries(item));
-      // [["you",100],["me",75],["foo",116],["bar",15]]
-    });
-    // let sorted = appending.sort((a, b) => a[1] - b[1]);
-    // console.log(sorted);
-    // let obj = { you: 100, me: 75, foo: 116, bar: 115 };
+    let storageValues1 = JSON.parse(localStorage.getItem("value"));
 
-    // let entries = Object.entries(obj);
-    // // [["you",100],["me",75],["foo",116],["bar",15]]
+    if (!(field === "transactionReceipt")) {
+      if (storageValues1) {
+        if (!ref.current) {
+          ref.current = true;
+          setLastfield(field);
 
-    // let sorted = entries.sort((a, b) => a[1] - b[1]);
-    // console.log(sorted);
+          storageValues1.sort((a, b) =>
+            a[field].toLowerCase() < b[field].toLowerCase() ? -1 : 1
+          );
+        } else if (ref.current) {
+          setLastfield("");
+
+          storageValues1.sort((a, b) =>
+            a[field].toLowerCase() > b[field].toLowerCase() ? -1 : 1
+          );
+        }
+        setLocal(storageValues1);
+        return 0;
+      }
+    }
   };
 
   return (
@@ -53,16 +58,22 @@ const ViewTransaction = () => {
       <div>
         <table className="show-data">
           <tbody>
+            <tr>
+              <td>
+                <Link to="/addTransaction">Add Transaction</Link>
+              </td>
+            </tr>
             <tr className="show-data-header">
               {th.map((item, index) => (
                 <th key={index} onClick={FuncSort} nonce={item.name}>
                   {item.text}
                 </th>
               ))}
+              <th>Action</th>
             </tr>
 
-            {storageValues ? (
-              storageValues.map((item, index) => (
+            {locals ? (
+              locals.map((item, index) => (
                 <tr key={index} className="show-data-content">
                   <td>{item.transactionDate}</td>
                   <td>{item.transactionMY}</td>
