@@ -16,9 +16,13 @@ const AddTransaction = () => {
     transactionNotes: "",
   };
 
+
+  const [ errmsg, setErrmsg] = useState(InitialValues)
   const [values, setValues] = useState(InitialValues);
   const [storage, setStorage] = useState([]);
   const [btnClick, setClick] = useState(false);
+
+  console.log(errmsg);
   const selectField = {
     1: {
       name: "transactionMY",
@@ -117,6 +121,35 @@ const AddTransaction = () => {
     const name = e.target.name;
     let value = e.target.value;
     let file;
+console.log(name);
+
+
+
+
+const emptyField = (name,value) =>{
+  let trav = value === '' ? (setErrmsg({...errmsg,[name]:'Field is Empty'})) : setErrmsg({...errmsg,[name]:'  '})
+  return trav
+}
+// transactionDate: "",
+//     transactionMY: "",
+//     transactionType: "",
+//     transactionFrom: "",
+//     transactionTo: "",
+//     transactionAmount: "",
+//     transactionReceipt: "",
+//     transactionNotes: ""
+
+    switch(name){
+      case 'transactionDate':
+let a= emptyField(name,value)
+console.log(a);
+break;
+
+case 'transactionAmount':
+  emptyField(name,value)
+      
+
+    }
 
     if (name === "transactionReceipt") {
       let files = e.target.files[0];
