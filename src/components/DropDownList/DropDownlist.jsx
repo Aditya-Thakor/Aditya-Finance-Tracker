@@ -2,7 +2,6 @@ import React from "react";
 
 export const DropDownlist = (props) => {
   const { label, name, onChange, optionValue } = props;
-
   return (
     <>
       <label htmlFor={name}>{label}</label>
