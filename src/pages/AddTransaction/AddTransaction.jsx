@@ -3,21 +3,13 @@ import { DropDownlist } from "../../components/DropDownList/DropDownlist";
 import { InputFields } from "../../components/InputFields/InputFields";
 import { useNavigate, Link } from "react-router-dom";
 import "./css/addTransaction.css";
+import { initialValues } from "../../utils/const";
+
 const AddTransaction = () => {
   const navigate = useNavigate();
-  const InitialValues = {
-    transactionDate: "",
-    transactionMY: "",
-    transactionType: "",
-    transactionFrom: "",
-    transactionTo: "",
-    transactionAmount: "",
-    transactionReceipt: "",
-    transactionNotes: "",
-  };
 
-  const [errmsg, setErrmsg] = useState(InitialValues);
-  const [values, setValues] = useState(InitialValues);
+  const [errmsg, setErrmsg] = useState(initialValues);
+  const [values, setValues] = useState(initialValues);
 
   const selectField = {
     1: {
