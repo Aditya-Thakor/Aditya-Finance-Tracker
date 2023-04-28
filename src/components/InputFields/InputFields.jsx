@@ -1,7 +1,7 @@
 import React from "react";
 
 export const InputFields = (props) => {
-  const { label, name, ...attributes } = props;
+  const { label, name, errmsg, ...attributes } = props;
 
   return (
     <div className="section-row">
@@ -9,7 +9,9 @@ export const InputFields = (props) => {
       <div className="inputComp">
         <input className="inputs" name={name} {...attributes} />
       </div>
-      <label htmlFor="">a</label>
+      <label className="errmsg" htmlFor="">
+        {errmsg}
+      </label>
     </div>
   );
 };

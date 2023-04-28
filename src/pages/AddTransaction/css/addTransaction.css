@@ -1,27 +1,28 @@
-.container{
-    display: flex;
-    justify-content: center ;
-    margin-top: 50px;
-    border: 1px solid;    
-
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  border: 1px solid;
 }
-.section{
-    padding: 10px 20px 0px;
-    width: 1000px;
+.section {
+  padding: 10px 20px 0px;
+  width: 1000px;
 }
-.section-row{
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.inputs{
-    height: 30px;
-    width: 230px;
+.section-row {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
 }
 
-.inputs-textarea{
+.inputs {
+  height: 30px;
+  width: 230px;
+}
 
-    height: 50px;
-    width: 230px;
+.inputs-textarea {
+  height: 50px;
+  width: 230px;
+}
+.errmsg {
+  color: red;
 }

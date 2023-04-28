@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { DropDownlist } from "../../components/DropDownList/DropDownlist";
+
 import "./css/viewTrans.css";
 
 const ViewTransaction = () => {
@@ -63,9 +63,10 @@ const ViewTransaction = () => {
 
   const groupBy = (e) => {
     let name = e.target.value;
+    // eslint-disable-next-line
     setScroller({ ...Scroller, ["state"]: true, ["name"]: name });
 
-    const groupByCategory = locals.reduce((groups, product) => {
+    locals.reduce((groups, product) => {
       let transactionFrom = product[name];
       groups[transactionFrom] = groups[transactionFrom] ?? [];
       groups[transactionFrom].push(product);
