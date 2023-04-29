@@ -1,34 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DropDownlist } from "../../components/DropDownList/DropDownlist";
 import { InputFields } from "../../components/InputFields/InputFields";
-import { json, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./css/addTransaction.css";
+import { initialValues } from "../../utils/const";
+
 const AddTransaction = () => {
   const navigate = useNavigate();
-  const InitialValues = {
-    transactionDate: "",
-    transactionMY: "",
-    transactionType: "",
-    transactionFrom: "",
-    transactionTo: "",
-    transactionAmount: "",
-    transactionReceipt: "",
-    transactionNotes: "",
-  };
 
+  const [errmsg, setErrmsg] = useState(initialValues);
+  const [values, setValues] = useState(initialValues);
 
-  const [ errmsg, setErrmsg] = useState(InitialValues)
-  const [values, setValues] = useState(InitialValues);
-  const [storage, setStorage] = useState([]);
-  const [btnClick, setClick] = useState(false);
-
-  console.log(errmsg);
   const selectField = {
     1: {
       name: "transactionMY",
-      label: "Select Field of month year : ",
+      label: "Select Field of month year",
       optionValue: [
-        "Select Month Year",
         "Jan 2023",
         "Feb 2023",
         "Mar 2023",
@@ -45,19 +32,13 @@ const AddTransaction = () => {
     },
     2: {
       name: "transactionType",
-      label: "Transaction Type : ",
-      optionValue: [
-        "Select Type",
-        "Home Expense",
-        "Personal Expense",
-        "Income",
-      ],
+      label: "Select Transaction Type",
+      optionValue: ["Home Expense", "Personal Expense", "Income"],
     },
     3: {
       name: "transactionFrom",
-      label: "From Account : ",
+      label: "Select From Account",
       optionValue: [
-        "Select Account",
         "Personal Account",
         "Real Living",
         "My Dream Home",
@@ -68,9 +49,8 @@ const AddTransaction = () => {
     },
     4: {
       name: "transactionTo",
-      label: "To Account : ",
+      label: "Select To Account",
       optionValue: [
-        "Select Account",
         "Personal Account",
         "Real Living",
         "My Dream Home",
@@ -102,78 +82,123 @@ const AddTransaction = () => {
 
   const checkSubmit = (e) => {
     e.preventDefault();
-    let isVAlid = true;
-    if (isVAlid) {
-      setClick(true);
-    }
-  };
+    let arr = [];
 
-  useEffect(() => {
-    if (btnClick) {
+    Object.values(errmsg).map((msg) => {
+      if (!(msg === "")) arr.push("err");
+      return 0;
+    });
+
+    if (!(arr.length > 0)) {
       let getvalue = JSON.parse(localStorage.getItem("value"));
       getvalue != null ? getvalue.push(values) : (getvalue = [values]);
       localStorage.setItem("value", JSON.stringify(getvalue));
       navigate("/viewTransaction");
     }
-  }, [btnClick]);
+  };
 
   const onchange = (e) => {
     const name = e.target.name;
-    let value = e.target.value;
+    let value = e.target.value.trim();
     let file;
-console.log(name);
 
+    const emptyField = (name, value) => {
+      value === ""
+        ? setErrmsg({ ...errmsg, [name]: "Field is Empty" })
+        : setErrmsg({ ...errmsg, [name]: "" });
+    };
 
+    const checkSelect = (name, value) => {
+      value === ""
+        ? setErrmsg({ ...errmsg, [name]: "Please Select This Field" })
+        : setErrmsg({ ...errmsg, [name]: "" });
+    };
 
+    switch (name) {
+      case "transactionDate":
+        emptyField(name, value);
+        break;
 
-const emptyField = (name,value) =>{
-  let trav = value === '' ? (setErrmsg({...errmsg,[name]:'Field is Empty'})) : setErrmsg({...errmsg,[name]:'  '})
-  return trav
-}
-// transactionDate: "",
-//     transactionMY: "",
-//     transactionType: "",
-//     transactionFrom: "",
-//     transactionTo: "",
-//     transactionAmount: "",
-//     transactionReceipt: "",
-//     transactionNotes: ""
+      case "transactionAmount":
+        if (value === "") {
+          emptyField(name, value);
+        } else if (!/^[0-9]*$/.test(value)) {
+          setErrmsg({ ...errmsg, [name]: "Enter Digits only" });
+        } else {
+          setErrmsg({ ...errmsg, [name]: "" });
+        }
+        break;
 
-    switch(name){
-      case 'transactionDate':
-let a= emptyField(name,value)
-console.log(a);
-break;
+      case "transactionFrom":
+        checkSelect(name, value);
+        break;
 
-case 'transactionAmount':
-  emptyField(name,value)
-      
+      case "transactionTo":
+        checkSelect(name, value);
+        break;
 
+      case "transactionType":
+        checkSelect(name, value);
+        break;
+
+      case "transactionMY":
+        checkSelect(name, value);
+        break;
+
+      case "transactionNotes":
+        emptyField(name, value);
+        if (value.length >= 250)
+          setErrmsg({
+            ...errmsg,
+            [name]: "Length Should be less than 250 letters.",
+          });
+        break;
+      case "transactionReceipt":
+        let files = e.target.files[0];
+        if (files) {
+          if (files.size > 1000000)
+            setErrmsg({
+              ...errmsg,
+              [name]: "Your image file is simply too big",
+            });
+          else if (
+            files.type === "image/jpg" ||
+            files.type === "image/png" ||
+            files.type === "image/jpeg"
+          ) {
+            file = new FileReader();
+            file.readAsDataURL(files);
+            file.onloadend = () => {
+              setValues({ ...values, [name]: file.result });
+              setErrmsg({ ...errmsg, [name]: "" });
+            };
+          } else {
+            setErrmsg({ ...errmsg, [name]: "The Format is not supported" });
+          }
+        }
+        break;
+
+      default:
     }
-
-    if (name === "transactionReceipt") {
-      let files = e.target.files[0];
-      console.log(files.type);
-      if (files.size > 1000000) alert("size exceed");
-      if (
-        files.type == "image/jpg" ||
-        files.type == "image/png" ||
-        files.type == "image/jpeg"
-      ) {
-        file = new FileReader();
-        file.readAsDataURL(files);
-        file.onloadend = () => {
-          setValues({ ...values, [name]: file.result });
-        };
-      } else {
-        alert("type not match");
-      }
-    } else {
+    if (!(name === "transactionReceipt")) {
       setValues({ ...values, [name]: value });
     }
   };
+
+  const btnClick = () => {
+    let obj = {};
+    console.log(values);
+    Object.keys(values).map((item) => {
+      if (values[item] === "") {
+        obj = { ...obj, [item]: "Field is Empty" };
+      }
+      return 0;
+    });
+    setErrmsg({ ...errmsg, ...obj });
+  };
+
   return (
-    <form action="" method="post">
+    <form action="" method="post" onSubmit={checkSubmit}>
       <Link to="/viewTransaction">View Transaction</Link>
       <div className="container">
         <div className="section">
@@ -181,14 +206,23 @@ case 'transactionAmount':
             {...inputFields[0]}
             onChange={onchange}
             value={values["name"]}
+            errmsg={errmsg.transactionDate}
           />
           {Object.values(selectField).map((item, index) => (
             <div className="section-row" key={index}>
-              <DropDownlist {...item} onChange={onchange} />
+              <DropDownlist {...item} onChange={onchange} errmsg={errmsg} />
             </div>
           ))}
-          <InputFields {...inputFields[1]} onChange={onchange} />
-          <InputFields {...inputFields[2]} onChange={onchange} />
+          <InputFields
+            {...inputFields[1]}
+            onChange={onchange}
+            errmsg={errmsg.transactionAmount}
+          />
+          <InputFields
+            {...inputFields[2]}
+            onChange={onchange}
+            errmsg={errmsg.transactionReceipt}
+          />
           <div className="section-row">
             <label htmlFor="note">Notes : </label>
             <textarea
@@ -196,13 +230,14 @@ case 'transactionAmount':
               className="inputs-textarea"
               onChange={onchange}
             ></textarea>
-            <label htmlFor="">A</label>
+            <label className="errmsg" htmlFor="">
+              {errmsg.transactionNotes}
+            </label>
           </div>
           <div className="section-row">
-            <button className="inputs" type="submit" onClick={checkSubmit}>
+            <button className="inputs" type="submit" onClick={btnClick}>
               Submit
             </button>
-            <label htmlFor="">A</label>
           </div>
         </div>
       </div>

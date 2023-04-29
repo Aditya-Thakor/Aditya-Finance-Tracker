@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { DropDownlist } from "../../components/DropDownList/DropDownlist";
+
 import "./css/viewTrans.css";
 
 const ViewTransaction = () => {
@@ -13,6 +13,7 @@ const ViewTransaction = () => {
     state: false,
     field: "",
   });
+  const [page, setPage] = useState(0);
   let ref = useRef(false);
 
   // Initials
@@ -28,9 +29,15 @@ const ViewTransaction = () => {
     { name: "transactionNotes", text: "Transaction Note" },
   ];
 
+  const [order, setOrder] = useState({
+    column: "",
+    order: "",
+  });
+
   const FuncSort = (e) => {
     let field = e.target.nonce;
 
+    console.log(field);
     if (Lastfiled !== field) {
       ref.current = false;
     }
@@ -63,9 +70,10 @@ const ViewTransaction = () => {
 
   const groupBy = (e) => {
     let name = e.target.value;
+    // eslint-disable-next-line
     setScroller({ ...Scroller, ["state"]: true, ["name"]: name });
 
-    const groupByCategory = locals.reduce((groups, product) => {
+    locals.reduce((groups, product) => {
       let transactionFrom = product[name];
       groups[transactionFrom] = groups[transactionFrom] ?? [];
       groups[transactionFrom].push(product);
@@ -73,6 +81,14 @@ const ViewTransaction = () => {
       return groups;
     }, {});
   };
+
+  const pagination = (number) => {
+    setPage(number);
+  };
+
+  useEffect(() => {
+    console.log(typeof page);
+  }, [page]);
 
   return (
     <>
@@ -108,32 +124,57 @@ const ViewTransaction = () => {
 
                   <>
                     {locals ? (
-                      locals.map((item, index) => (
-                        <tr key={index} className="show-data-content">
-                          <td>{item.transactionDate}</td>
-                          <td>{item.transactionMY}</td>
-                          <td>{item.transactionType}</td>
-                          <td>{item.transactionFrom}</td>
-                          <td>{item.transactionTo}</td>
-                          <td>Rs. {item.transactionAmount}</td>
-                          <td>
-                            <img
-                              src={item.transactionReceipt}
-                              height="60px"
-                              width="100px"
-                              alt="imagea"
-                            ></img>
-                          </td>
-                          <td>{item.transactionNotes}</td>
-                          <td>
-                            <Link to="/view">View</Link>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr className="no-data">
-                        <td colSpan="9">No data Found </td>
+                      // locals.map((item, index) => (
+                      //   <tr key={index} className="show-data-content">
+                      //     <td>{item.transactionDate}</td>
+                      //     <td>{item.transactionMY}</td>
+                      //     <td>{item.transactionType}</td>
+                      //     <td>{item.transactionFrom}</td>
+                      //     <td>{item.transactionTo}</td>
+                      //     <td>Rs. {item.transactionAmount}</td>
+                      //     <td>
+                      //       <img
+                      //         src={item.transactionReceipt}
+                      //         height="60px"
+                      //         width="100px"
+                      //         alt="imagea"
+                      //       ></img>
+                      //     </td>
+                      //     <td>{item.transactionNotes}</td>
+                      //     <td>
+                      //       <Link to={"/Transaction/" + ++index}>View</Link>
+                      //     </td>
+                      //   </tr>
+                      // ))
+                      <tr className="show-data-content">
+                        <td>{locals[page]["transactionDate"]}</td>
+                        <td>{locals[page]["transactionMY"]}</td>
+                        <td>{locals[page]["transactionType"]}</td>
+                        <td>{locals[page]["transactionFrom"]}</td>
+                        <td>{locals[page]["transactionTo"]}</td>
+                        <td>Rs. {locals[page]["transactionAmount"]}</td>
+
+                        <td>
+                          <img
+                            src={locals[page]["transactionReceipt"]}
+                            height="60px"
+                            width="100px"
+                            alt="imagea"
+                          ></img>
+                        </td>
+                        <td>{locals[page]["transactionNotes"]}</td>
+                        <td>
+                          <Link to={"/Transaction/" + parseInt(page + 1)}>
+                            View
+                          </Link>
+                        </td>
                       </tr>
+                    ) : (
+                      !locals && (
+                        <tr className="no-data">
+                          <td colSpan="9">No data Found </td>
+                        </tr>
+                      )
                     )}
                   </>
                 </>
@@ -142,6 +183,19 @@ const ViewTransaction = () => {
           </tbody>
         </table>
 
+        {!Scroller["state"] && (
+          <div className="pages">
+            {locals.map((item, index) => (
+              <span
+                colSpan={8 - index}
+                key={index}
+                onClick={() => pagination(index)}
+              >
+                {index + 1}
+              </span>
+            ))}
+          </div>
+        )}
         <table>
           <tbody>
             <tr>
@@ -154,11 +208,10 @@ const ViewTransaction = () => {
                         {item.text}
                       </th>
                     ))}
-                    <th>Action</th>
+                    {/* <th>Action</th> */}
                   </tr>
-                  {Object.values(item).map((name) => (
+                  {Object.values(item).map((name, index) => (
                     <tr className="show-data-content">
-                      {console.log(name)}
                       <td>{name.transactionDate}</td>
                       <td>{name.transactionMY}</td>
                       <td>{name.transactionType}</td>
@@ -174,9 +227,6 @@ const ViewTransaction = () => {
                         ></img>
                       </td>
                       <td>{name.transactionNotes}</td>
-                      <td>
-                        <Link to="/view">View</Link>
-                      </td>
                     </tr>
                   ))}
                 </tr>
