@@ -1,27 +1,54 @@
 .container {
   display: flex;
-  justify-content: center;
-  margin-top: 50px;
-  border: 1px solid;
-}
-.section {
-  padding: 10px 20px 0px;
-  width: 1000px;
-}
-.section-row {
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
 }
 
-.inputs {
+.section {
+  margin: 40px;
+  padding: 20px;
+}
+
+.section button {
+  margin: 20px 0px;
+  padding: 10px 20px;
+  background-color: blueviolet;
+  color: white;
+  border: 0px;
+}
+.section button:hover {
+  background-color: brown;
+}
+.form-inputs,
+.form-select,
+.form-textarea {
+  padding: 10px;
+}
+
+.form-inputs input,
+.form-select select {
   height: 30px;
   width: 230px;
+  padding: 5px;
+  margin: 0px 10px;
 }
 
-.inputs-textarea {
-  height: 50px;
-  width: 230px;
+.form-inputs input[type="file"] {
+  height: 20px;
+  padding: 5px;
+  margin: 0px 10px;
+}
+
+.form-textarea {
+  display: flex;
+  align-items: center;
+}
+
+.form-textarea textarea {
+  max-height: 60px;
+  max-width: 250px;
+  min-width: 270px;
+  min-height: 60px;
+  margin: 0px 10px;
+  text-indent: 5px;
 }
 .errmsg {
   color: red;

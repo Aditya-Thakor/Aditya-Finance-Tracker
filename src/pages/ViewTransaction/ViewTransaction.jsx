@@ -2,13 +2,18 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import "./css/viewTrans.css";
+import TableComp from "../../components/TableComp/TableComp";
+import FormSelect from "../../components/DropDownList/FormSelect";
 
 const ViewTransaction = () => {
   const storageValues = JSON.parse(localStorage.getItem("value"));
 
-  // Hooks
   const [locals, setLocal] = useState(storageValues);
-  const [Lastfiled, setLastfield] = useState("");
+
+  const [sortedList, setSortedList] = useState(storageValues);
+
+  const [groupList, setGroupList] = useState([]);
+
   const [Scroller, setScroller] = useState({
     state: false,
     field: "",
@@ -17,52 +22,45 @@ const ViewTransaction = () => {
   let ref = useRef(false);
 
   // Initials
-  let th = [
-    { name: "transactionDate", text: "Transaction Date" },
-    { name: "transactionMY", text: "Month Year" },
-    { name: "transactionType", text: "Transaction Type" },
 
-    { name: "transactionFrom", text: "From Account" },
-    { name: "transactionTo", text: "To Account" },
-    { name: "transactionAmount", text: "Transaction Amount" },
-    { name: "transactionReceipt", text: "Transaction Receipt" },
-    { name: "transactionNotes", text: "Transaction Note" },
-  ];
+  const initialValues = {
+    transactionDate: "Transaction Date",
+    transactionMY: "Month Year",
+    transactionType: "Transaction Type",
+    transactionFrom: "From Account",
+    transactionTo: "To Account",
+    transactionAmount: "Transaction Amount",
+    transactionReceipt: "Transaction Receipt",
+    transactionNotes: "Transaction Note",
+  };
 
   const [order, setOrder] = useState({
-    column: "",
-    order: "",
+    field: "",
+    sort: "",
   });
 
-  const FuncSort = (e) => {
+  const handleClick = (e) => {
     let field = e.target.nonce;
 
-    console.log(field);
-    if (Lastfiled !== field) {
-      ref.current = false;
-    }
-
-    let storageValues1 = JSON.parse(localStorage.getItem("value"));
-
-    if (!(field === "transactionReceipt")) {
-      if (storageValues1) {
-        if (!ref.current) {
-          ref.current = true;
-          setLastfield(field);
-
-          storageValues1.sort((a, b) =>
-            a[field].toLowerCase() < b[field].toLowerCase() ? -1 : 1
-          );
-        } else if (ref.current) {
-          setLastfield("");
-
-          storageValues1.sort((a, b) =>
-            a[field].toLowerCase() > b[field].toLowerCase() ? -1 : 1
-          );
-        }
-        setLocal(storageValues1);
-        return 0;
+    if (sortedList) {
+      if ((order.sort === "" && order.field === "") || order.field !== field) {
+        setOrder({ ...order, ["field"]: field, ["sort"]: "asc" });
+        sortedList.sort((a, b) =>
+          a[field].toLowerCase() < b[field].toLowerCase() ? -1 : 1
+        );
+      } else if (order.sort === "asc" && order.field === field) {
+        setOrder({ ...order, ["field"]: field, ["sort"]: "desc" });
+        sortedList.sort((a, b) =>
+          a[field].toLowerCase() > b[field].toLowerCase() ? -1 : 1
+        );
+      } else {
+        setOrder({ ...order, ["field"]: "", ["sort"]: "" });
       }
+
+      order.sort !== "desc"
+        ? setSortedList(sortedList)
+        : setSortedList(storageValues);
+      return 0;
     }
   };
 
@@ -86,155 +84,58 @@ const ViewTransaction = () => {
     setPage(number);
   };
 
-  useEffect(() => {
-    console.log(typeof page);
-  }, [page]);
-
   return (
     <>
-      <div>
-        <table className="show-data">
-          <tbody>
-            <tr>
-              <td colSpan="7">
-                <Link to="/addTransaction">Add Transaction</Link>
-              </td>
-              <td>
-                <select name="" id="" onChange={groupBy}>
-                  <option value="">Select Field</option>
-                  {th.map((item, index) => (
-                    <option key={index} value={item.name}>
-                      {item.text}
-                    </option>
-                  ))}
-                </select>
-              </td>
-            </tr>
-            <>
-              {!Scroller["state"] && (
-                <>
-                  <tr className="show-data-header">
-                    {th.map((item, index) => (
-                      <th key={index} onClick={FuncSort} nonce={item.name}>
-                        {item.text}
-                      </th>
-                    ))}
-                    <th>Action</th>
-                  </tr>
-
-                  <>
-                    {locals ? (
-                      // locals.map((item, index) => (
-                      //   <tr key={index} className="show-data-content">
-                      //     <td>{item.transactionDate}</td>
-                      //     <td>{item.transactionMY}</td>
-                      //     <td>{item.transactionType}</td>
-                      //     <td>{item.transactionFrom}</td>
-                      //     <td>{item.transactionTo}</td>
-                      //     <td>Rs. {item.transactionAmount}</td>
-                      //     <td>
-                      //       <img
-                      //         src={item.transactionReceipt}
-                      //         height="60px"
-                      //         width="100px"
-                      //         alt="imagea"
-                      //       ></img>
-                      //     </td>
-                      //     <td>{item.transactionNotes}</td>
-                      //     <td>
-                      //       <Link to={"/Transaction/" + ++index}>View</Link>
-                      //     </td>
-                      //   </tr>
-                      // ))
-                      <tr className="show-data-content">
-                        <td>{locals[page]["transactionDate"]}</td>
-                        <td>{locals[page]["transactionMY"]}</td>
-                        <td>{locals[page]["transactionType"]}</td>
-                        <td>{locals[page]["transactionFrom"]}</td>
-                        <td>{locals[page]["transactionTo"]}</td>
-                        <td>Rs. {locals[page]["transactionAmount"]}</td>
-
-                        <td>
-                          <img
-                            src={locals[page]["transactionReceipt"]}
-                            height="60px"
-                            width="100px"
-                            alt="imagea"
-                          ></img>
-                        </td>
-                        <td>{locals[page]["transactionNotes"]}</td>
-                        <td>
-                          <Link to={"/Transaction/" + parseInt(page + 1)}>
-                            View
-                          </Link>
-                        </td>
-                      </tr>
-                    ) : (
-                      !locals && (
-                        <tr className="no-data">
-                          <td colSpan="9">No data Found </td>
-                        </tr>
-                      )
-                    )}
-                  </>
-                </>
-              )}
-            </>
-          </tbody>
-        </table>
-
-        {!Scroller["state"] && (
-          <div className="pages">
-            {locals.map((item, index) => (
-              <span
-                colSpan={8 - index}
-                key={index}
-                onClick={() => pagination(index)}
-              >
-                {index + 1}
-              </span>
-            ))}
-          </div>
+      <Link to="/add-transaction">Add Transaction</Link>
+      <FormSelect options={initialValues} handleChange={groupBy} />
+      <span> Field : {order.field === "" ? "Default" : order.field}</span>
+      <span> Order : {order.sort === "" ? "Default" : order.sort}</span>
+      <table>
+        {locals && group.length <= 0 && (
+          <>
+            {sortedList ? (
+              <TableComp
+                className="show-data"
+                handleClick={handleClick}
+                tableHeaders={initialValues}
+                tableBody={sortedList}
+              />
+            ) : (
+              <tr className="no-data">
+                <td colSpan="10">No data Found </td>
+              </tr>
+            )}
+          </>
         )}
-        <table>
-          <tbody>
-            <tr>
-              {Object.values(group).map((item) => (
-                <tr>
-                  <h2>{item[0][Scroller["name"]]}</h2>
-                  <tr className="show-data-header">
-                    {th.map((item, index) => (
-                      <th key={index} onClick={FuncSort} nonce={item.name}>
-                        {item.text}
-                      </th>
-                    ))}
-                    {/* <th>Action</th> */}
+
+        {group ? (
+          <>
+            {Object.entries(group).map(([key, value], index) => (
+              <>
+                {key === "undefined" ? null : (
+                  <tr>
+                    <td>
+                      <h1>{key}</h1>
+                    </td>
                   </tr>
-                  {Object.values(item).map((name, index) => (
-                    <tr className="show-data-content">
-                      <td>{name.transactionDate}</td>
-                      <td>{name.transactionMY}</td>
-                      <td>{name.transactionType}</td>
-                      <td>{name.transactionFrom}</td>
-                      <td>{name.transactionTo}</td>
-                      <td>Rs. {name.transactionAmount}</td>
-                      <td>
-                        <img
-                          src={name.transactionReceipt}
-                          height="60px"
-                          width="100px"
-                          alt="imagea"
-                        ></img>
-                      </td>
-                      <td>{name.transactionNotes}</td>
-                    </tr>
-                  ))}
-                </tr>
-              ))}
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                )}
+
+                <TableComp
+                  key={index}
+                  className="show-data"
+                  tableHeaders={initialValues}
+                  handleClick={key === "undefined" ? handleClick : null}
+                  tableBody={key === "undefined" ? sortedList : value}
+                />
+              </>
+            ))}
+          </>
+        ) : (
+          <tr className="no-data">
+            <td colSpan="10">No data Found </td>
+          </tr>
+        )}
+      </table>
     </>
   );
 };

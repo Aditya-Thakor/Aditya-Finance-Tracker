@@ -1,85 +1,17 @@
 import React, { useState } from "react";
-import { DropDownlist } from "../../components/DropDownList/DropDownlist";
-import { InputFields } from "../../components/InputFields/InputFields";
 import { useNavigate, Link } from "react-router-dom";
 import "./css/addTransaction.css";
-import { initialValues } from "../../utils/const";
+import { initialValues, selectField, inputFields } from "../../utils/const";
+import FormSelect from "../../components/DropDownList/FormSelect";
+import FormInputs from "../../components/DropDownList/FormInputs";
+import FormButton from "../../components/DropDownList/FormButton";
+import FormTextarea from "../../components/DropDownList/FormTextarea";
 
 const AddTransaction = () => {
   const navigate = useNavigate();
 
   const [errmsg, setErrmsg] = useState(initialValues);
   const [values, setValues] = useState(initialValues);
-
-  const selectField = {
-    1: {
-      name: "transactionMY",
-      label: "Select Field of month year",
-      optionValue: [
-        "Jan 2023",
-        "Feb 2023",
-        "Mar 2023",
-        "Apr 2023",
-        "May 2023",
-        "Jun 2023",
-        "Jul 2023",
-        "Aug 2023",
-        "Sep 2023",
-        "Oct 2023",
-        "Nov 2023",
-        "Des 2023",
-      ],
-    },
-    2: {
-      name: "transactionType",
-      label: "Select Transaction Type",
-      optionValue: ["Home Expense", "Personal Expense", "Income"],
-    },
-    3: {
-      name: "transactionFrom",
-      label: "Select From Account",
-      optionValue: [
-        "Personal Account",
-        "Real Living",
-        "My Dream Home",
-        "Full Circle",
-        "Core Realtors",
-        "Big Block",
-      ],
-    },
-    4: {
-      name: "transactionTo",
-      label: "Select To Account",
-      optionValue: [
-        "Personal Account",
-        "Real Living",
-        "My Dream Home",
-        "Full Circle",
-        "Core Realtors",
-        "Big Block",
-      ],
-    },
-  };
-
-  const inputFields = [
-    {
-      label: "Enter Transaction Date : ",
-      type: "date",
-      name: "transactionDate",
-    },
-    {
-      label: "Enter Transaction Amount : ",
-      type: "text",
-      name: "transactionAmount",
-      placeholder: "Enter Amount",
-    },
-    {
-      name: "transactionReceipt",
-      label: "Upload Transaction Receipt : ",
-      type: "file",
-    },
-  ];
-
   const checkSubmit = (e) => {
     e.preventDefault();
     let arr = [];
@@ -91,26 +23,22 @@ const AddTransaction = () => {
 
     if (!(arr.length > 0)) {
       let getvalue = JSON.parse(localStorage.getItem("value"));
+
       getvalue != null ? getvalue.push(values) : (getvalue = [values]);
       localStorage.setItem("value", JSON.stringify(getvalue));
-      navigate("/viewTransaction");
+      navigate("/view-transactions");
     }
   };
 
-  const onchange = (e) => {
+  const handleChange = (e) => {
     const name = e.target.name;
+    const type = e.target.type;
     let value = e.target.value.trim();
-    let file;
-
     const emptyField = (name, value) => {
       value === ""
-        ? setErrmsg({ ...errmsg, [name]: "Field is Empty" })
-        : setErrmsg({ ...errmsg, [name]: "" });
-    };
-
-    const checkSelect = (name, value) => {
-      value === ""
-        ? setErrmsg({ ...errmsg, [name]: "Please Select This Field" })
+        ? type === "select-one"
+          ? setErrmsg({ ...errmsg, [name]: "Please Select This Field" })
+          : setErrmsg({ ...errmsg, [name]: "Field is Empty" })
         : setErrmsg({ ...errmsg, [name]: "" });
     };
 
@@ -130,19 +58,19 @@ const AddTransaction = () => {
         break;
 
       case "transactionFrom":
-        checkSelect(name, value);
+        emptyField(name, value);
         break;
 
       case "transactionTo":
-        checkSelect(name, value);
+        emptyField(name, value);
         break;
 
       case "transactionType":
-        checkSelect(name, value);
+        emptyField(name, value);
         break;
 
       case "transactionMY":
-        checkSelect(name, value);
+        emptyField(name, value);
         break;
 
       case "transactionNotes":
@@ -155,7 +83,14 @@ const AddTransaction = () => {
         break;
       case "transactionReceipt":
         let files = e.target.files[0];
-        if (files) {
+
+        if (files === undefined)
+          setErrmsg({
+            ...errmsg,
+            [name]: "Field is Empty",
+          });
+
+        if (files && files !== undefined) {
           if (files.size > 1000000)
             setErrmsg({
               ...errmsg,
@@ -166,7 +101,7 @@ const AddTransaction = () => {
             files.type === "image/png" ||
             files.type === "image/jpeg"
           ) {
-            file = new FileReader();
+            let file = new FileReader();
             file.readAsDataURL(files);
             file.onloadend = () => {
               setValues({ ...values, [name]: file.result });
@@ -181,16 +116,24 @@ const AddTransaction = () => {
       default:
     }
     if (!(name === "transactionReceipt")) {
-      setValues({ ...values, [name]: value });
+      setValues({
+        ...values,
+        [name]: value,
+      });
     }
   };
 
-  const btnClick = () => {
+  const handleClick = () => {
     let obj = {};
-    console.log(values);
+    let count = 1;
+    let getvalue = JSON.parse(localStorage.getItem("value"));
+    getvalue !== null ? (count = getvalue.length + 1) : (count = 1);
+    setValues({ ...values, ["transaction"]: count.toString() });
     Object.keys(values).map((item) => {
-      if (values[item] === "") {
-        obj = { ...obj, [item]: "Field is Empty" };
+      if (item !== "transaction") {
+        if (values[item] === "") {
+          obj = { ...obj, [item]: "Field is Empty" };
+        }
       }
       return 0;
     });
@@ -199,46 +142,57 @@ const AddTransaction = () => {
 
   return (
     <form action="" method="post" onSubmit={checkSubmit}>
-      <Link to="/viewTransaction">View Transaction</Link>
+      <Link to="/view-transactions">View Transaction</Link>
       <div className="container">
         <div className="section">
-          <InputFields
+          <FormInputs
             {...inputFields[0]}
-            onChange={onchange}
-            value={values["name"]}
-            errmsg={errmsg.transactionDate}
+            className="form-inputs"
+            errmsg={errmsg}
+            handleChange={handleChange}
           />
+
           {Object.values(selectField).map((item, index) => (
-            <div className="section-row" key={index}>
-              <DropDownlist {...item} onChange={onchange} errmsg={errmsg} />
-            </div>
+            <>
+              <FormSelect
+                key={index}
+                {...item}
+                className="form-select"
+                handleChange={handleChange}
+                errmsg={errmsg}
+              />
+            </>
           ))}
-          <InputFields
+          <FormInputs
+            className="form-inputs"
             {...inputFields[1]}
-            onChange={onchange}
-            errmsg={errmsg.transactionAmount}
+            errmsg={errmsg}
+            handleChange={handleChange}
           />
-          <InputFields
+          <FormInputs
+            className="form-inputs"
             {...inputFields[2]}
-            onChange={onchange}
-            errmsg={errmsg.transactionReceipt}
+            errmsg={errmsg}
+            handleChange={handleChange}
           />
-          <div className="section-row">
-            <label htmlFor="note">Notes : </label>
-            <textarea
+          <>
+            <FormTextarea
+              className="form-textarea"
+              placeholder="Enter Note about Transaction"
               name="transactionNotes"
-              className="inputs-textarea"
-              onChange={onchange}
-            ></textarea>
-            <label className="errmsg" htmlFor="">
-              {errmsg.transactionNotes}
-            </label>
-          </div>
-          <div className="section-row">
-            <button className="inputs" type="submit" onClick={btnClick}>
-              Submit
-            </button>
-          </div>
+              handleChange={handleChange}
+              label="Notes :"
+              errmsg={errmsg}
+            />
+          </>
+          <>
+            <FormButton
+              className="inputs"
+              type="submit"
+              name="ADD TRANSACTION"
+              handleClick={handleClick}
+            />
+          </>
         </div>
       </div>
     </form>
