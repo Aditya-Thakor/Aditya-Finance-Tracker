@@ -10,18 +10,36 @@ const FormInputs = (props) => {
     id,
     handleChange,
     errmsg,
+    value,
   } = props;
+
   return (
     <div className={className}>
       <label htmlFor="">{label}</label>
-      <input
-        type={type}
-        name={name}
-        id={id || ""}
-        placeholder={placeholder || ""}
-        onChange={handleChange}
-      />
-      <span className="errmsg">{errmsg[name]}</span>
+      {value ? (
+        name !== "transactionReceipt" ? (
+          <input
+            defaultValue={value[name]}
+            type={type}
+            name={name}
+            id={id || ""}
+            placeholder={placeholder || ""}
+            onChange={handleChange || null}
+          />
+        ) : (
+          <img src={value[name]} alt="imgas" width="120px" height="80px" />
+        )
+      ) : (
+        <input
+          defaultValue=""
+          type={type}
+          name={name}
+          id={id || ""}
+          placeholder={placeholder || ""}
+          onChange={handleChange}
+        />
+      )}
+      <span className="errmsg">{errmsg ? errmsg[name] : null}</span>
     </div>
   );
 };

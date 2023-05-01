@@ -17,50 +17,61 @@ export const selectField = {
     name: "transactionMY",
     label: "Select Field of month year",
     options: {
-      1: "Jan 2023",
-      2: "Feb 2023",
-      3: "Mar 2023",
-      4: "Apr 2023",
-      5: "May 2023",
-      6: "Jun 2023",
-      7: "Jul 2023",
-      8: "Aug 2023",
-      9: "Sep 2023",
-      10: "Oct 2023",
-      11: "Nov 2023",
-      12: "Des 2023",
+
+      "Jan 2023": "Jan 2023",
+      "Feb 2023": "Feb 2023",
+      "Mar 2023": "Mar 2023",
+      "Apr 2023": "Apr 2023",
+      "May 2023": "May 2023",
+      "Jun 2023": "Jun 2023",
+      "Jul 2023": "Jul 2023",
+      "Aug 2023": "Aug 2023",
+      "Sep 2023": "Sep 2023",
+      "Oct 2023": "Oct 2023",
+      "Nov 2023": "Nov 2023",
+      "Des 2023": "Des 2023",
     },
   },
   2: {
     name: "transactionType",
     label: "Select Transaction Type",
-    options: ["Home Expense", "Personal Expense", "Income"],
+    options: {
+      "Home Expense":"Home Expense", 
+    "Personal Expense":"Personal Expense", 
+    "Income":"Income"
+  },
   },
   3: {
     name: "transactionFrom",
     label: "Select From Account",
-    options: [
-      "Personal Account",
-      "Real Living",
-      "My Dream Home",
-      "Full Circle",
-      "Core Realtors",
-      "Big Block",
-    ],
+    options: {
+      "Personal Account":"Personal Account",
+      "Real Living":"Real Living",
+      "My Dream Home":"My Dream Home",
+      "Full Circle":"Full Circle",
+      "Core Realtors":"Core Realtors",
+      "Big Block":"Big Block",
+    },
   },
   4: {
     name: "transactionTo",
     label: "Select To Account",
-    options: [
-      "Personal Account",
-      "Real Living",
-      "My Dream Home",
-      "Full Circle",
-      "Core Realtors",
-      "Big Block",
-    ],
+    options: {
+      "Personal Account":"Personal Account",
+      "Real Living":"Real Living",
+      "My Dream Home":"My Dream Home",
+      "Full Circle":"Full Circle",
+      "Core Realtors":"Core Realtors",
+      "Big Block":"Big Block",
+    },
   },
 };
+
+
+
+
+
+
 export const inputFields = [
   {
     label: "Enter Transaction Date : ",
@@ -79,3 +90,11 @@ export const inputFields = [
     type: "file",
   },
 ];
+
+
+export const credits = {
+  username : '',
+  email :'',
+  pass:'',
+  confirm:''
+}

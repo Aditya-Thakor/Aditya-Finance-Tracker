@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import "./css/addTransaction.css";
 import { initialValues, selectField, inputFields } from "../../utils/const";
 import FormSelect from "../../components/DropDownList/FormSelect";
@@ -9,14 +9,24 @@ import FormTextarea from "../../components/DropDownList/FormTextarea";
 
 const AddTransaction = () => {
   const navigate = useNavigate();
-
   const [errmsg, setErrmsg] = useState(initialValues);
   const [values, setValues] = useState(initialValues);
+
+  const [storageData, setStorageData] = useState(null);
+
+  const id = useParams().id;
+  useEffect(() => {
+    if (id) {
+      let data = JSON.parse(localStorage.getItem("value"));
+      setStorageData(data[id - 1]);
+    }
+  }, [id]);
+
   const checkSubmit = (e) => {
     e.preventDefault();
     let arr = [];
 
-    Object.values(errmsg).map((msg) => {
+    Object.values(errmsg).map((msg, index) => {
       if (!(msg === "")) arr.push("err");
       return 0;
     });
@@ -31,9 +41,11 @@ const AddTransaction = () => {
   };
 
   const handleChange = (e) => {
+    console.log(e.target.value);
     const name = e.target.name;
     const type = e.target.type;
     let value = e.target.value.trim();
+
     const emptyField = (name, value) => {
       value === ""
         ? type === "select-one"
@@ -123,13 +135,21 @@ const AddTransaction = () => {
     }
   };
 
+  useEffect(() => {
+    Object.entries(values).map(([name, value], index) => {
+      setValues({ ...values, [name]: value });
+      console.log(values);
+    });
+  }, []);
   const handleClick = () => {
     let obj = {};
     let count = 1;
     let getvalue = JSON.parse(localStorage.getItem("value"));
     getvalue !== null ? (count = getvalue.length + 1) : (count = 1);
+
+    // eslint-disable-next-line
     setValues({ ...values, ["transaction"]: count.toString() });
-    Object.keys(values).map((item) => {
+    Object.keys(values).map((item, index) => {
       if (item !== "transaction") {
         if (values[item] === "") {
           obj = { ...obj, [item]: "Field is Empty" };
@@ -150,30 +170,32 @@ const AddTransaction = () => {
             className="form-inputs"
             errmsg={errmsg}
             handleChange={handleChange}
+            value={storageData}
           />
 
           {Object.values(selectField).map((item, index) => (
-            <>
+            <div key={index}>
               <FormSelect
-                key={index}
-                {...item}
                 className="form-select"
                 handleChange={handleChange}
                 errmsg={errmsg}
+                {...item}
               />
-            </>
+            </div>
           ))}
           <FormInputs
             className="form-inputs"
             {...inputFields[1]}
             errmsg={errmsg}
             handleChange={handleChange}
+            value={storageData}
           />
           <FormInputs
             className="form-inputs"
             {...inputFields[2]}
             errmsg={errmsg}
             handleChange={handleChange}
+            value={storageData}
           />
           <>
             <FormTextarea

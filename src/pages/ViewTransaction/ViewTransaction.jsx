@@ -112,13 +112,7 @@ const ViewTransaction = () => {
           <>
             {Object.entries(group).map(([key, value], index) => (
               <>
-                {key === "undefined" ? null : (
-                  <tr>
-                    <td>
-                      <h1>{key}</h1>
-                    </td>
-                  </tr>
-                )}
+                {key === "undefined" ? null : <h1>{key}</h1>}
 
                 <TableComp
                   key={index}

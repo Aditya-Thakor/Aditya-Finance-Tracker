@@ -42,7 +42,11 @@ const TableComp = (props) => {
               <td>
                 <Link to={"/transaction/" + name["transaction"]}>View</Link>{" "}
               </td>
-              <td>Edit</td>
+              <td>
+                <Link to={"/update-transaction/" + name["transaction"]}>
+                  Edit
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>
