@@ -6,12 +6,10 @@ import FormSelect from "../../components/DropDownList/FormSelect";
 import FormInputs from "../../components/DropDownList/FormInputs";
 import FormButton from "../../components/DropDownList/FormButton";
 import FormTextarea from "../../components/DropDownList/FormTextarea";
-
 const AddTransaction = () => {
   const navigate = useNavigate();
   const [errmsg, setErrmsg] = useState(initialValues);
   const [values, setValues] = useState(initialValues);
-
   const [storageData, setStorageData] = useState(null);
 
   const id = useParams().id;
@@ -138,7 +136,6 @@ const AddTransaction = () => {
   useEffect(() => {
     Object.entries(values).map(([name, value], index) => {
       setValues({ ...values, [name]: value });
-      console.log(values);
     });
   }, []);
   const handleClick = () => {

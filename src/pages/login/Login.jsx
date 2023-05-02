@@ -6,9 +6,7 @@ import { credits } from "../../utils/const";
 
 const Login = () => {
   const navigate = useNavigate();
-
   const [credentials, setCredentials] = useState(credits);
-  const [errmsg, setErrmsg] = useState(credits);
 
   const inputFields = [
     {
@@ -25,16 +23,20 @@ const Login = () => {
     },
   ];
 
-  let count = 1;
-  const handleClick = (e) => {
+  const handleClick = async (e) => {
     const users = JSON.parse(localStorage.getItem("user"));
+
     users.map((item) => {
       if (
-        item["email"] === credentials["email"] &&
+        item["email"] === credentials["email"].toLowerCase() &&
         item["pass"] === credentials["pass"]
       ) {
+        const gettingToken = {
+          key: Math.floor(Math.random() * 999999999999999),
+          token: true,
+        };
+        localStorage.setItem("token", JSON.stringify(gettingToken));
         navigate("/view-transactions");
-        console.log(count++);
       }
     });
   };
@@ -43,6 +45,7 @@ const Login = () => {
     const value = e.target.value;
     setCredentials({ ...credentials, [name]: value });
   };
+
   return (
     <div>
       <h1>Login</h1>
@@ -55,7 +58,7 @@ const Login = () => {
         />
       ))}
       <Link to="/register"> Register Here </Link>
-      <FormButton name="Login" handleClick={handleClick} />
+      <FormButton name="Login" type="button" handleClick={handleClick} />
     </div>
   );
 };

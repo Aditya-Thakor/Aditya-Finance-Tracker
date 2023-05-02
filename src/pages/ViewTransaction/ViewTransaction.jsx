@@ -1,11 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import "./css/viewTrans.css";
 import TableComp from "../../components/TableComp/TableComp";
 import FormSelect from "../../components/DropDownList/FormSelect";
 
 const ViewTransaction = () => {
+  const gettingToken = JSON.parse(localStorage.getItem("token"));
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log("token", gettingToken);
+    if (!gettingToken) {
+      navigate("/public/login");
+    }
+  }, []);
+
   const storageValues = JSON.parse(localStorage.getItem("value"));
 
   const [locals, setLocal] = useState(storageValues);
@@ -19,7 +29,6 @@ const ViewTransaction = () => {
     field: "",
   });
   const [page, setPage] = useState(0);
-  let ref = useRef(false);
 
   // Initials
 
@@ -86,50 +95,54 @@ const ViewTransaction = () => {
 
   return (
     <>
-      <Link to="/add-transaction">Add Transaction</Link>
-      <FormSelect options={initialValues} handleChange={groupBy} />
-      <span> Field : {order.field === "" ? "Default" : order.field}</span>
-      <span> Order : {order.sort === "" ? "Default" : order.sort}</span>
-      <table>
-        {locals && group.length <= 0 && (
-          <>
-            {sortedList ? (
-              <TableComp
-                className="show-data"
-                handleClick={handleClick}
-                tableHeaders={initialValues}
-                tableBody={sortedList}
-              />
+      {gettingToken && (
+        <>
+          <Link to="/add-transaction">Add Transaction</Link>
+          <FormSelect options={initialValues} handleChange={groupBy} />
+          <span> Field : {order.field === "" ? "Default" : order.field}</span>
+          <span> Order : {order.sort === "" ? "Default" : order.sort}</span>
+          <table>
+            {locals && group.length <= 0 && (
+              <>
+                {sortedList ? (
+                  <TableComp
+                    className="show-data"
+                    handleClick={handleClick}
+                    tableHeaders={initialValues}
+                    tableBody={sortedList}
+                  />
+                ) : (
+                  <tr className="no-data">
+                    <td colSpan="10">No data Found </td>
+                  </tr>
+                )}
+              </>
+            )}
+
+            {group ? (
+              <>
+                {Object.entries(group).map(([key, value], index) => (
+                  <>
+                    {key === "undefined" ? null : <h1>{key}</h1>}
+
+                    <TableComp
+                      key={index}
+                      className="show-data"
+                      tableHeaders={initialValues}
+                      handleClick={key === "undefined" ? handleClick : null}
+                      tableBody={key === "undefined" ? sortedList : value}
+                    />
+                  </>
+                ))}
+              </>
             ) : (
               <tr className="no-data">
                 <td colSpan="10">No data Found </td>
               </tr>
             )}
-          </>
-        )}
-
-        {group ? (
-          <>
-            {Object.entries(group).map(([key, value], index) => (
-              <>
-                {key === "undefined" ? null : <h1>{key}</h1>}
-
-                <TableComp
-                  key={index}
-                  className="show-data"
-                  tableHeaders={initialValues}
-                  handleClick={key === "undefined" ? handleClick : null}
-                  tableBody={key === "undefined" ? sortedList : value}
-                />
-              </>
-            ))}
-          </>
-        ) : (
-          <tr className="no-data">
-            <td colSpan="10">No data Found </td>
-          </tr>
-        )}
-      </table>
+          </table>
+        </>
+      )}
     </>
   );
 };
