@@ -19,12 +19,12 @@ const FormInputs = (props) => {
       {value ? (
         name !== "transactionReceipt" ? (
           <input
-            defaultValue={value[name]}
+            onChange={handleChange || null}
+            value={() => value[name]}
             type={type}
             name={name}
             id={id || ""}
             placeholder={placeholder || ""}
-            onChange={handleChange || null}
           />
         ) : (
           <img src={value[name]} alt="imgas" width="120px" height="80px" />

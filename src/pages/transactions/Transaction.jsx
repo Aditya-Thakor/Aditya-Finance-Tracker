@@ -13,7 +13,7 @@ const Transaction = (props) => {
   useEffect(() => {
     setHold(true);
     if (id > total || isNaN(id)) {
-      navigate("/viewTransaction");
+      navigate("/view-transactions");
     } else {
       setHold(false);
     }
@@ -27,8 +27,8 @@ const Transaction = (props) => {
           <div className="header-div">
             <h1>Transaction No. : {id}</h1>
             <div className="links">
-              <Link to="/viewTransaction">View Transaction</Link>
-              <Link to="/addTransaction">Add Transaction</Link>
+              <Link to="/view-transactions">View Transaction</Link>
+              <Link to="/add-transaction">Add Transaction</Link>
             </div>
           </div>
           <table className="show-data">

@@ -17,7 +17,6 @@ export const selectField = {
     name: "transactionMY",
     label: "Select Field of month year",
     options: {
-
       "Jan 2023": "Jan 2023",
       "Feb 2023": "Feb 2023",
       "Mar 2023": "Mar 2023",
@@ -36,41 +35,36 @@ export const selectField = {
     name: "transactionType",
     label: "Select Transaction Type",
     options: {
-      "Home Expense":"Home Expense", 
-    "Personal Expense":"Personal Expense", 
-    "Income":"Income"
-  },
+      "Home Expense": "Home Expense",
+      "Personal Expense": "Personal Expense",
+      Income: "Income",
+    },
   },
   3: {
     name: "transactionFrom",
     label: "Select From Account",
     options: {
-      "Personal Account":"Personal Account",
-      "Real Living":"Real Living",
-      "My Dream Home":"My Dream Home",
-      "Full Circle":"Full Circle",
-      "Core Realtors":"Core Realtors",
-      "Big Block":"Big Block",
+      "Personal Account": "Personal Account",
+      "Real Living": "Real Living",
+      "My Dream Home": "My Dream Home",
+      "Full Circle": "Full Circle",
+      "Core Realtors": "Core Realtors",
+      "Big Block": "Big Block",
     },
   },
   4: {
     name: "transactionTo",
     label: "Select To Account",
     options: {
-      "Personal Account":"Personal Account",
-      "Real Living":"Real Living",
-      "My Dream Home":"My Dream Home",
-      "Full Circle":"Full Circle",
-      "Core Realtors":"Core Realtors",
-      "Big Block":"Big Block",
+      "Personal Account": "Personal Account",
+      "Real Living": "Real Living",
+      "My Dream Home": "My Dream Home",
+      "Full Circle": "Full Circle",
+      "Core Realtors": "Core Realtors",
+      "Big Block": "Big Block",
     },
   },
 };
-
-
-
-
-
 
 export const inputFields = [
   {
@@ -91,10 +85,9 @@ export const inputFields = [
   },
 ];
 
-
 export const credits = {
-  username : '',
-  email :'',
-  pass:'',
-  confirm:''
-}
+  username: "",
+  email: "",
+  pass: "",
+  confirm: "",
+};

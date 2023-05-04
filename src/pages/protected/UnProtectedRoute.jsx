@@ -1,8 +1,5 @@
 import React, { useEffect } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import AddTransaction from "../AddTransaction/AddTransaction";
-import ViewTransaction from "../ViewTransaction/ViewTransaction";
-import Transaction from "../ViewTransaction/Transaction";
 import Register from "../register/Register";
 import Login from "../login/Login";
 

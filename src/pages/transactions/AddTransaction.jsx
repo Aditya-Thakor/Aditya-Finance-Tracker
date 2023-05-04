@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
-import "./css/addTransaction.css";
+
 import { initialValues, selectField, inputFields } from "../../utils/const";
-import FormSelect from "../../components/DropDownList/FormSelect";
-import FormInputs from "../../components/DropDownList/FormInputs";
-import FormButton from "../../components/DropDownList/FormButton";
-import FormTextarea from "../../components/DropDownList/FormTextarea";
+import FormInputs from "../../components/FormFields/FormInputs";
+import FormSelect from "../../components/FormFields/FormSelect";
+import FormButton from "../../components/FormFields/FormButton";
+import FormTextarea from "../../components/FormFields/FormTextarea";
 const AddTransaction = () => {
   const navigate = useNavigate();
   const [errmsg, setErrmsg] = useState(initialValues);
@@ -13,10 +13,11 @@ const AddTransaction = () => {
   const [storageData, setStorageData] = useState(null);
 
   const id = useParams().id;
+  let store = JSON.parse(localStorage.getItem("value"));
+
   useEffect(() => {
     if (id) {
-      let data = JSON.parse(localStorage.getItem("value"));
-      setStorageData(data[id - 1]);
+      setStorageData(store[id - 1]);
     }
   }, [id]);
 
@@ -30,16 +31,13 @@ const AddTransaction = () => {
     });
 
     if (!(arr.length > 0)) {
-      let getvalue = JSON.parse(localStorage.getItem("value"));
-
-      getvalue != null ? getvalue.push(values) : (getvalue = [values]);
-      localStorage.setItem("value", JSON.stringify(getvalue));
+      store ? store.push(values) : (store = [values]);
+      localStorage.setItem("value", JSON.stringify(store));
       navigate("/view-transactions");
     }
   };
 
   const handleChange = (e) => {
-    console.log(e.target.value);
     const name = e.target.name;
     const type = e.target.type;
     let value = e.target.value.trim();
@@ -133,27 +131,35 @@ const AddTransaction = () => {
     }
   };
 
-  useEffect(() => {
-    Object.entries(values).map(([name, value], index) => {
-      setValues({ ...values, [name]: value });
-    });
-  }, []);
   const handleClick = () => {
     let obj = {};
     let count = 1;
     let getvalue = JSON.parse(localStorage.getItem("value"));
-    getvalue !== null ? (count = getvalue.length + 1) : (count = 1);
 
-    // eslint-disable-next-line
-    setValues({ ...values, ["transaction"]: count.toString() });
-    Object.keys(values).map((item, index) => {
-      if (item !== "transaction") {
-        if (values[item] === "") {
-          obj = { ...obj, [item]: "Field is Empty" };
+    if (storageData === null) {
+      getvalue !== null ? (count = getvalue.length + 1) : (count = 1);
+      setValues({ ...values, transaction: count.toString() });
+      Object.keys(values).map((item, index) => {
+        if (item !== "transaction") {
+          if (values[item] === "") {
+            obj = { ...obj, [item]: "Field is Empty" };
+          }
         }
-      }
-      return 0;
-    });
+        return 0;
+      });
+    } else {
+      count = id;
+      getvalue.splice(id - 1, 1);
+      setValues({ ...values, transaction: count.toString() });
+      Object.keys(values).map((item, index) => {
+        if (item !== "transaction") {
+          if (values[item] === "") {
+            obj = { ...obj, [item]: "Field is Empty" };
+          }
+        }
+        return 0;
+      });
+    }
     setErrmsg({ ...errmsg, ...obj });
   };
 
@@ -163,11 +169,11 @@ const AddTransaction = () => {
       <div className="container">
         <div className="section">
           <FormInputs
-            {...inputFields[0]}
             className="form-inputs"
             errmsg={errmsg}
             handleChange={handleChange}
             value={storageData}
+            {...inputFields[0]}
           />
 
           {Object.values(selectField).map((item, index) => (
@@ -175,6 +181,7 @@ const AddTransaction = () => {
               <FormSelect
                 className="form-select"
                 handleChange={handleChange}
+                value={storageData}
                 errmsg={errmsg}
                 {...item}
               />
@@ -182,17 +189,17 @@ const AddTransaction = () => {
           ))}
           <FormInputs
             className="form-inputs"
-            {...inputFields[1]}
             errmsg={errmsg}
             handleChange={handleChange}
             value={storageData}
+            {...inputFields[1]}
           />
           <FormInputs
             className="form-inputs"
-            {...inputFields[2]}
             errmsg={errmsg}
             handleChange={handleChange}
             value={storageData}
+            {...inputFields[2]}
           />
           <>
             <FormTextarea
@@ -202,6 +209,7 @@ const AddTransaction = () => {
               handleChange={handleChange}
               label="Notes :"
               errmsg={errmsg}
+              value={storageData}
             />
           </>
           <>

@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import AddTransaction from "../AddTransaction/AddTransaction";
-import ViewTransaction from "../ViewTransaction/ViewTransaction";
-import Transaction from "../ViewTransaction/Transaction";
+import AddTransaction from "../transactions/AddTransaction";
+import ViewTransaction from "../transactions/ViewTransaction";
+import Transaction from "../transactions/Transaction";
 
 const ProtectedRoute = () => {
   const gettingToken = JSON.parse(localStorage.getItem("token"));

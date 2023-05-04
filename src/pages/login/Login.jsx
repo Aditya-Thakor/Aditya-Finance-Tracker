@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import FormInputs from "../../components/DropDownList/FormInputs";
-import FormButton from "../../components/DropDownList/FormButton";
 import { credits } from "../../utils/const";
+import FormInputs from "../../components/FormFields/FormInputs";
+import FormButton from "../../components/FormFields/FormButton";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ const Login = () => {
           handleChange={handleChange}
         />
       ))}
-      <Link to="/register"> Register Here </Link>
+      <Link to="/public/register"> Register Here </Link>
       <FormButton name="Login" type="button" handleClick={handleClick} />
     </div>
   );

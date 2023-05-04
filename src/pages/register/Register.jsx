@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import FormInputs from "../../components/DropDownList/FormInputs";
-import FormButton from "../../components/DropDownList/FormButton";
-import "./css/register.css";
 import { credits } from "../../utils/const";
 import { Link, useNavigate } from "react-router-dom";
+import FormInputs from "../../components/FormFields/FormInputs";
+import FormButton from "../../components/FormFields/FormButton";
 const Register = () => {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState(credits);
@@ -109,7 +108,7 @@ const Register = () => {
       if (!(msg === "")) arr.push("err");
       return 0;
     });
-    console.log(credentials);
+
     if (!(arr.length > 0)) {
       let getvalue = JSON.parse(localStorage.getItem("user"));
 
