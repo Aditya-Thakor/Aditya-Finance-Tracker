@@ -6,21 +6,27 @@ import FormInputs from "../../components/FormFields/FormInputs";
 import FormSelect from "../../components/FormFields/FormSelect";
 import FormButton from "../../components/FormFields/FormButton";
 import FormTextarea from "../../components/FormFields/FormTextarea";
+
 const AddTransaction = () => {
   const navigate = useNavigate();
   const [errmsg, setErrmsg] = useState(initialValues);
   const [values, setValues] = useState(initialValues);
-  const [storageData, setStorageData] = useState(null);
 
   const id = useParams().id;
-  let store = JSON.parse(localStorage.getItem("value"));
-
+  const store = JSON.parse(localStorage.getItem("value"));
   useEffect(() => {
     if (id) {
-      setStorageData(store[id - 1]);
+      setValues(store[id - 1]);
     }
   }, [id]);
 
+  useEffect(() => {
+    store.filter((item) => {
+      if (item.transaction === id) {
+        setValues({ ...values, ...item });
+      }
+    });
+  }, []);
   const checkSubmit = (e) => {
     e.preventDefault();
     let arr = [];
@@ -31,8 +37,12 @@ const AddTransaction = () => {
     });
 
     if (!(arr.length > 0)) {
-      store ? store.push(values) : (store = [values]);
-      localStorage.setItem("value", JSON.stringify(store));
+      let getvalue = JSON.parse(localStorage.getItem("value"));
+      if (id) {
+        getvalue.splice(id - 1, 1);
+      }
+      getvalue != null ? getvalue.push(values) : (getvalue = [values]);
+      localStorage.setItem("value", JSON.stringify(getvalue));
       navigate("/view-transactions");
     }
   };
@@ -135,31 +145,22 @@ const AddTransaction = () => {
     let obj = {};
     let count = 1;
     let getvalue = JSON.parse(localStorage.getItem("value"));
+    id
+      ? (count = id)
+      : getvalue !== null
+      ? (count = getvalue.length + 1)
+      : (count = 1);
 
-    if (storageData === null) {
-      getvalue !== null ? (count = getvalue.length + 1) : (count = 1);
-      setValues({ ...values, transaction: count.toString() });
-      Object.keys(values).map((item, index) => {
-        if (item !== "transaction") {
-          if (values[item] === "") {
-            obj = { ...obj, [item]: "Field is Empty" };
-          }
+    console.log(count);
+    setValues({ ...values, transaction: count.toString() });
+    Object.keys(values).map((item, index) => {
+      if (item !== "transaction") {
+        if (values[item] === "") {
+          obj = { ...obj, [item]: "Field is Empty" };
         }
-        return 0;
-      });
-    } else {
-      count = id;
-      getvalue.splice(id - 1, 1);
-      setValues({ ...values, transaction: count.toString() });
-      Object.keys(values).map((item, index) => {
-        if (item !== "transaction") {
-          if (values[item] === "") {
-            obj = { ...obj, [item]: "Field is Empty" };
-          }
-        }
-        return 0;
-      });
-    }
+      }
+      return 0;
+    });
     setErrmsg({ ...errmsg, ...obj });
   };
 
@@ -169,10 +170,9 @@ const AddTransaction = () => {
       <div className="container">
         <div className="section">
           <FormInputs
-            className="form-inputs"
             errmsg={errmsg}
             handleChange={handleChange}
-            value={storageData}
+            value={values}
             {...inputFields[0]}
           />
 
@@ -180,25 +180,23 @@ const AddTransaction = () => {
             <div key={index}>
               <FormSelect
                 className="form-select"
+                value={values}
                 handleChange={handleChange}
-                value={storageData}
                 errmsg={errmsg}
                 {...item}
               />
             </div>
           ))}
           <FormInputs
-            className="form-inputs"
             errmsg={errmsg}
             handleChange={handleChange}
-            value={storageData}
+            value={values}
             {...inputFields[1]}
           />
           <FormInputs
-            className="form-inputs"
             errmsg={errmsg}
             handleChange={handleChange}
-            value={storageData}
+            value={values}
             {...inputFields[2]}
           />
           <>
@@ -209,12 +207,12 @@ const AddTransaction = () => {
               handleChange={handleChange}
               label="Notes :"
               errmsg={errmsg}
-              value={storageData}
+              value={values}
             />
           </>
           <>
             <FormButton
-              className="inputs"
+              className="btn btn-primary"
               type="submit"
               name="ADD TRANSACTION"
               handleClick={handleClick}

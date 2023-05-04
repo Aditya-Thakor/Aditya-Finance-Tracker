@@ -1,8 +1,8 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import ProtectedRoute from "./pages/protected/ProtectedRoute";
 import UnProtectedRoute from "./pages/protected/UnProtectedRoute";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const gettingToken = JSON.parse(localStorage.getItem("token"));

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TableComp from "./components/TableComp";
 import FormSelect from "../../components/FormFields/FormSelect";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const ViewTransaction = () => {
   const storageValues = JSON.parse(localStorage.getItem("value"));
@@ -44,7 +44,11 @@ const ViewTransaction = () => {
   return (
     <>
       <Link to="/add-transaction">Add Transaction</Link>
-      <FormSelect options={initialValues} handleChange={groupBy} />
+      <FormSelect
+        label="Group by Field Name : "
+        options={initialValues}
+        handleChange={groupBy}
+      />
 
       {group.length == 0 ? (
         <TableComp data={locals} />

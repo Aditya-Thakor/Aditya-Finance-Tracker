@@ -98,10 +98,10 @@ const TableComp = ({ data }) => {
 
   return (
     <>
-      Search : <FormInputs handleChange={searching} />
+      <FormInputs label="Search : " handleChange={searching} />
       {dataset.length > 0 ? (
         <div>
-          <table border="1px">
+          <table className="table table-borderless" border="1px">
             <thead>
               <tr>
                 {Object.keys(initialValues).map((item, index) => (
@@ -169,57 +169,3 @@ const TableComp = ({ data }) => {
 };
 
 export default TableComp;
-// {
-//   /* <thead>
-//           <tr>
-//             {Object.entries(locals).map(([name, text], index) =>
-//               name !== "transactionReceipt" ? (
-//                 <th key={index} id={name} name={name} onClick={handleClick}>
-//                   {text}
-//                 </th>
-//               ) : (
-//                 <th key={index} name={name}>
-//                   {text}
-//                 </th>
-//               )
-//             )}
-//             <th>Action</th>
-//             <th>Edit</th>
-//           </tr>
-//         </thead> */
-// }
-// {
-//   /* {tableBody && (
-//           <tbody className="show-data-content">
-//             {tableBody.map((name, index) => (
-//               <tr key={index}>
-//                 {Object.entries(name).map(
-//                   ([key, value], index) =>
-//                     key !== "transaction" &&
-//                     (value.includes("data:image") ? (
-//                       <td key={index}>
-//                         <img
-//                           className="base64-img"
-//                           src={value}
-//                           alt="transaction"
-//                           width="100px"
-//                           height="60px"
-//                         />
-//                       </td>
-//                     ) : (
-//                       <td key={index}>{value}</td>
-//                     ))
-//                 )}
-//                 <td>
-//                   <Link to={"/transaction/" + name["transaction"]}>View</Link>{" "}
-//                 </td>
-//                 <td>
-//                   <Link to={"/update-transaction/" + name["transaction"]}>
-//                     Edit
-//                   </Link>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         )} */
-// }

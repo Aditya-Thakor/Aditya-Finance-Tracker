@@ -3,10 +3,19 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 
 const Transaction = (props) => {
   let id = useParams().number;
-
+  const [Data, setData] = useState({});
   const [hold, setHold] = useState(null);
   const stoarge = JSON.parse(localStorage.getItem("value"));
-  let Data = stoarge[id - 1];
+
+  useEffect(() => {
+    stoarge.filter((item) => {
+      if (item.transaction === id) {
+        setData({ ...Data, ...item });
+      }
+    });
+  }, []);
+
+  console.log(Data);
   let total = stoarge.length;
   let navigate = useNavigate();
 
@@ -31,7 +40,7 @@ const Transaction = (props) => {
               <Link to="/add-transaction">Add Transaction</Link>
             </div>
           </div>
-          <table className="show-data">
+          <table className="table table-borderless">
             <tbody>
               {Object.entries(Data).map((item, index) => (
                 <tr key={index} className="show-data-content">
