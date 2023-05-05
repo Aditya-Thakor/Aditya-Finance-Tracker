@@ -3,15 +3,17 @@ import React from "react";
 const FormSelect = (props) => {
   const { label, name, id, className, errmsg, handleChange, options, value } =
     props;
+
   return (
-    <div class="row g-3 align-items-center">
-      <div class="col-auto">
-        <label for="inputPassword6" class="col-form-label">
+    <div className="row align-items">
+      <div className="col-auto">
+        <label htmlFor="inputPassword6" className="col-form-label">
           {label}
         </label>
       </div>
-      <div class="col-auto">
+      <div className="col-auto">
         <select
+          className="form-select"
           name={name || null}
           id={id || null}
           onChange={handleChange || null}
@@ -39,8 +41,8 @@ const FormSelect = (props) => {
             : null}
         </select>
       </div>
-      <div class="col-auto">
-        <span id="passwordHelpInline" class="form-text">
+      <div className="col-auto">
+        <span id="passwordHelpInline" className="form-text">
           {errmsg ? errmsg[name] : null}
         </span>
       </div>

@@ -47,19 +47,27 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      {inputFields.map((item, index) => (
-        <FormInputs
-          key={index}
-          className="form-inputs"
-          {...item}
-          handleChange={handleChange}
-        />
-      ))}
-      <Link to="/public/register"> Register Here </Link>
-      <FormButton name="Login" type="button" handleClick={handleClick} />
-    </div>
+    <>
+      <div className="nav">
+        <Link className="anchor" to="/public/register">
+          Register Here
+        </Link>
+      </div>
+      <div>
+        <h1>Login</h1>
+        {inputFields.map((item, index) => (
+          <FormInputs
+            key={index}
+            className="form-inputs"
+            {...item}
+            handleChange={handleChange}
+          />
+        ))}
+        <div className="submit-data">
+          <FormButton name="Login" type="button" handleClick={handleClick} />
+        </div>
+      </div>
+    </>
   );
 };
 

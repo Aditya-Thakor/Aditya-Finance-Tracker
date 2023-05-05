@@ -2,42 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import FormInputs from "../../../components/FormFields/FormInputs";
 import FormSelect from "../../../components/FormFields/FormSelect";
+import { getLocalData } from "../../../utils/helper";
 
 const TableComp = ({ data }) => {
-  const [dataset, setDataset] = useState(data);
-  const [searchdata, setSearchData] = useState([]);
+  const [getData, setGetData] = useState(data);
+  const [dataset, setDataset] = useState(getData);
+  const [limit, setLimit] = useState(5);
   const [order, setOrder] = useState({
     field: "",
     sort: "",
   });
-
-  const [pageno, setPage] = useState(1);
-
-  const [limit, setLimit] = useState(2);
-
-  useEffect(() => {
-    setDataset(data);
-    const filter = data.slice(0, limit);
-
-    setDataset(filter);
-  }, [data]);
-
-  const handleClick = (e) => {
-    let field = e.target.id;
-
-    if ((order.sort === "" && order.field === "") || order.field !== field) {
-      setOrder({ ...order, field: field, sort: "asc" });
-      data.sort((a, b) => (a[field] < b[field] ? -1 : 1));
-    } else if (order.sort === "asc" && order.field === field) {
-      setOrder({ ...order, field: field, sort: "desc" });
-      data.sort((a, b) => (a[field] > b[field] ? -1 : 1));
-    } else {
-      setOrder({ ...order, field: "", sort: "" });
-    }
-
-    order.sort !== "desc" ? setDataset(data) : setDataset(data);
-    return 0;
-  };
 
   const initialValues = {
     transactionDate: "Transaction Date",
@@ -50,25 +24,65 @@ const TableComp = ({ data }) => {
     transactionNotes: "Transaction Note",
   };
 
+  useEffect(() => {
+    if (data) {
+      const filter = data.slice(0, limit);
+      setDataset(filter);
+    }
+  }, [data, limit]);
+
+  const handleClick = (e) => {
+    let field = e.target.id;
+
+    if ((order.sort === "" && order.field === "") || order.field !== field) {
+      setOrder({ ...order, field: field, sort: "asc" });
+      dataset.sort((a, b) => (a[field] < b[field] ? -1 : 1));
+    } else if (order.sort === "asc" && order.field === field) {
+      setOrder({ ...order, field: field, sort: "desc" });
+      dataset.sort((a, b) => (a[field] > b[field] ? -1 : 1));
+    } else {
+      setOrder({ ...order, field: "", sort: "" });
+    }
+    order.sort !== "desc" ? setDataset(dataset) : setDataset(dataset);
+    return 0;
+  };
+
   const searching = (e) => {
     const getvalue = e.target.value;
-
     let arr = [];
 
     data.map((item) => {
-      if (item["transactionDate"].includes(getvalue)) {
+      if (getvalue.includes(item["transactionDate"])) {
         arr.push(item);
-      } else if (item["transactionMY"].includes(getvalue)) {
+      } else if (
+        item["transactionMY"].includes(getvalue) ||
+        item["transactionMY"].toLowerCase().includes(getvalue)
+      ) {
         arr.push(item);
-      } else if (item["transactionType"].includes(getvalue)) {
+      } else if (
+        item["transactionType"].includes(getvalue) ||
+        item["transactionType"].toLowerCase().includes(getvalue)
+      ) {
         arr.push(item);
-      } else if (item["transactionFrom"].includes(getvalue)) {
+      } else if (
+        item["transactionFrom"].includes(getvalue) ||
+        item["transactionFrom"].toLowerCase().includes(getvalue)
+      ) {
         arr.push(item);
-      } else if (item["transactionTo"].includes(getvalue)) {
+      } else if (
+        item["transactionTo"].includes(getvalue) ||
+        item["transactionTo"].toLowerCase().includes(getvalue)
+      ) {
         arr.push(item);
-      } else if (item["transactionNotes"].includes(getvalue)) {
+      } else if (
+        item["transactionNotes"].includes(getvalue) ||
+        item["transactionNotes"].toLowerCase().includes(getvalue)
+      ) {
         arr.push(item);
-      } else if (item["transactionAmount"].includes(getvalue)) {
+      } else if (
+        item["transactionAmount"].includes(getvalue) ||
+        item["transactionAmount"].toLowerCase().includes(getvalue)
+      ) {
         arr.push(item);
       }
     });
@@ -79,34 +93,56 @@ const TableComp = ({ data }) => {
     }
   };
 
-  const pagination = (e) => {
-    const page = e.target.id;
-    const start = (page - 1) * limit;
-    const end = page * limit;
-
-    const filter = data.slice(start, end);
-    console.log(filter);
-    setDataset(filter);
-    setPage(page);
-  };
-
   const options = {
     1: 1,
     2: 2,
     5: 5,
+    10: 10,
+  };
+  const pagination = (e) => {
+    if (data) {
+      const page = e.target.id;
+      console.log(page);
+      const start = (page - 1) * limit;
+      const end = page * limit;
+
+      const filter = data.slice(start, end);
+      console.log(filter);
+      setDataset(filter);
+    }
+  };
+  useEffect(() => {
+    setLimit(limit);
+  }, [limit]);
+  const pageLimit = (e) => {
+    console.log(e);
+    const page = e.target.value || 5;
+    setLimit(page);
   };
 
   return (
-    <>
-      <FormInputs label="Search : " handleChange={searching} />
-      {dataset.length > 0 ? (
+    <div className="table-component">
+      <div className="search-row">
+        <div className="input-group rounded search-control">
+          <input
+            onChange={searching}
+            type="search"
+            className="form-control rounded"
+            placeholder="Search"
+            aria-label="Search"
+            aria-describedby="search-addon"
+          />
+        </div>
+        <FormSelect options={options} handleChange={pageLimit} />
+      </div>
+      {dataset && dataset.length > 0 ? (
         <div>
           <table className="table table-borderless" border="1px">
             <thead>
               <tr>
                 {Object.keys(initialValues).map((item, index) => (
                   <th onClick={handleClick} id={item} key={index}>
-                    {item}
+                    {item.replace("transaction", "Transaction ")}
                   </th>
                 ))}
                 <th>Action</th>
@@ -146,25 +182,34 @@ const TableComp = ({ data }) => {
               ))}
             </tbody>
           </table>
+          <div></div>
+          <div className="pagination">
+            {Array(Math.ceil(data.length / limit))
+              .fill()
+              .map((_, index) => (
+                <nav aria-label="..." key={index}>
+                  <ul className="pagination pagination-sl">
+                    <li className="page-item">
+                      <span
+                        key={index}
+                        id={index + 1}
+                        className="page-link"
+                        onClick={pagination}
+                      >
+                        {index + 1}
+                      </span>
+                    </li>
+                  </ul>
+                </nav>
+              ))}
+          </div>
         </div>
       ) : (
-        <span>No Data</span>
+        <nav className="navbar navbar-light bg-light alignment">
+          <span className="navbar-text">No data</span>
+        </nav>
       )}
-      <div className="pageno">
-        {Array(Math.ceil(data.length / limit))
-          .fill()
-          .map((number, index) => (
-            <span
-              key={index}
-              id={index + 1}
-              className="no"
-              onClick={pagination}
-            >
-              {index + 1}
-            </span>
-          ))}
-      </div>
-    </>
+    </div>
   );
 };
 

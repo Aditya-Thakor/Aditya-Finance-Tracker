@@ -21,11 +21,13 @@ const AddTransaction = () => {
   }, [id]);
 
   useEffect(() => {
-    store.filter((item) => {
-      if (item.transaction === id) {
-        setValues({ ...values, ...item });
-      }
-    });
+    if (store) {
+      store.filter((item) => {
+        if (item.transaction === id) {
+          setValues({ ...values, ...item });
+        }
+      });
+    }
   }, []);
   const checkSubmit = (e) => {
     e.preventDefault();
@@ -39,7 +41,9 @@ const AddTransaction = () => {
     if (!(arr.length > 0)) {
       let getvalue = JSON.parse(localStorage.getItem("value"));
       if (id) {
-        getvalue.splice(id - 1, 1);
+        if (getvalue) {
+          getvalue.splice(id - 1, 1);
+        }
       }
       getvalue != null ? getvalue.push(values) : (getvalue = [values]);
       localStorage.setItem("value", JSON.stringify(getvalue));
@@ -55,8 +59,14 @@ const AddTransaction = () => {
     const emptyField = (name, value) => {
       value === ""
         ? type === "select-one"
-          ? setErrmsg({ ...errmsg, [name]: "Please Select This Field" })
-          : setErrmsg({ ...errmsg, [name]: "Field is Empty" })
+          ? setErrmsg({
+              ...errmsg,
+              [name]: name.replace("transaction", "") + " is Required ",
+            })
+          : setErrmsg({
+              ...errmsg,
+              [name]: name.replace("transaction", "") + " is Required",
+            })
         : setErrmsg({ ...errmsg, [name]: "" });
     };
 
@@ -105,7 +115,7 @@ const AddTransaction = () => {
         if (files === undefined)
           setErrmsg({
             ...errmsg,
-            [name]: "Field is Empty",
+            [name]: name.replace("transaction", "") + " is Required",
           });
 
         if (files && files !== undefined) {
@@ -151,12 +161,14 @@ const AddTransaction = () => {
       ? (count = getvalue.length + 1)
       : (count = 1);
 
-    console.log(count);
     setValues({ ...values, transaction: count.toString() });
     Object.keys(values).map((item, index) => {
       if (item !== "transaction") {
         if (values[item] === "") {
-          obj = { ...obj, [item]: "Field is Empty" };
+          obj = {
+            ...obj,
+            [item]: item.replace("transaction", "") + " is Required",
+          };
         }
       }
       return 0;
@@ -166,7 +178,11 @@ const AddTransaction = () => {
 
   return (
     <form action="" method="post" onSubmit={checkSubmit}>
-      <Link to="/view-transactions">View Transaction</Link>
+      <div className="nav">
+        <Link className="anchor" to="/view-transactions">
+          View Transaction
+        </Link>
+      </div>
       <div className="container">
         <div className="section">
           <FormInputs
@@ -210,14 +226,13 @@ const AddTransaction = () => {
               value={values}
             />
           </>
-          <>
+          <div className="submit-data">
             <FormButton
-              className="btn btn-primary"
               type="submit"
               name="ADD TRANSACTION"
               handleClick={handleClick}
             />
-          </>
+          </div>
         </div>
       </div>
     </form>

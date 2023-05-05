@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import TableComp from "./components/TableComp";
 import FormSelect from "../../components/FormFields/FormSelect";
 import { Link, useParams } from "react-router-dom";
+import { Button } from "@mui/material";
+import { getLocalData } from "../../utils/helper";
 
 const ViewTransaction = () => {
-  const storageValues = JSON.parse(localStorage.getItem("value"));
-
-  const [locals, setLocal] = useState(storageValues);
+  const [locals, setLocal] = useState(() => getLocalData());
   const [group, setGroups] = useState([]);
   const [Scroller, setScroller] = useState({
     state: false,
@@ -43,14 +43,18 @@ const ViewTransaction = () => {
 
   return (
     <>
-      <Link to="/add-transaction">Add Transaction</Link>
-      <FormSelect
-        label="Group by Field Name : "
-        options={initialValues}
-        handleChange={groupBy}
-      />
+      <div className="nav">
+        <Link className="anchor" to="/add-transaction">
+          Add Transaction
+        </Link>
+        <FormSelect
+          label="Group by Field Name : "
+          options={initialValues}
+          handleChange={groupBy}
+        />
+      </div>
 
-      {group.length == 0 ? (
+      {group.length === 0 ? (
         <TableComp data={locals} />
       ) : (
         Object.keys(group).map((item, index) => (

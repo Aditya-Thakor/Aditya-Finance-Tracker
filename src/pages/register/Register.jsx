@@ -93,7 +93,10 @@ const Register = () => {
 
     Object.keys(credentials).map((item, index) => {
       if (credentials[item] === "") {
-        obj = { ...obj, [item]: "Field is Empty" };
+        obj = {
+          ...obj,
+          [item]: item.charAt(0).toUpperCase() + item.slice(1) + " is Required",
+        };
       }
     });
 
@@ -120,26 +123,35 @@ const Register = () => {
     }
   };
   return (
-    <div>
-      <form action="" onSubmit={handleSubmit}>
-        {inputFields.map((item, index) => (
-          <FormInputs
-            key={index}
-            className="form-inputs"
-            handleChange={handleChange}
-            errmsg={errmsg}
-            {...item}
-          />
-        ))}
-        <FormButton
-          type="submit"
-          className="inputs"
-          name="Register"
-          handleClick={handleClick}
-        />
-      </form>
-      <Link to="/login">Login Here!</Link>
-    </div>
+    <>
+      <div className="nav">
+        <Link className="anchor" to="/login">
+          Login Here
+        </Link>
+      </div>
+      <div>
+        <form action="" onSubmit={handleSubmit}>
+          <h1>Register</h1>
+          {inputFields.map((item, index) => (
+            <FormInputs
+              key={index}
+              className="form-inputs"
+              handleChange={handleChange}
+              errmsg={errmsg}
+              {...item}
+            />
+          ))}
+          <div className="submit-data">
+            <FormButton
+              type="submit"
+              className="inputs"
+              name="Register"
+              handleClick={handleClick}
+            />
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 
