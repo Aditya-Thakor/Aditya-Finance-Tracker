@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-import { array } from "yup";
 import FormNoValidateSelect from "../../../components/formFields/FormNoValidateSelect";
+import { tableHeaders } from "../../../utils/const";
 
 const TableComp = ({ data }) => {
   const [getData, setGetData] = useState(data);
@@ -13,16 +12,9 @@ const TableComp = ({ data }) => {
     sort: "",
   });
 
-  const initialValues = {
-    transactionDate: "Transaction Date",
-    transactionMY: "Month Year",
-    transactionType: "Transaction Type",
-    transactionFrom: "From Account",
-    transactionTo: "To Account",
-    transactionAmount: "Transaction Amount",
-    transactionReceipt: "Transaction Receipt",
-    transactionNotes: "Transaction Note",
-  };
+  useEffect(() => {
+    setLimit(limit);
+  }, [limit]);
 
   useEffect(() => {
     if (data) {
@@ -52,39 +44,21 @@ const TableComp = ({ data }) => {
     let arr = [];
 
     data.map((item) => {
-      if (getvalue.includes(item["transactionDate"])) {
-        arr.push(item);
-      } else if (
-        item["transactionMY"].includes(getvalue) ||
-        item["transactionMY"].toLowerCase().includes(getvalue)
-      ) {
-        arr.push(item);
-      } else if (
-        item["transactionType"].includes(getvalue) ||
-        item["transactionType"].toLowerCase().includes(getvalue)
-      ) {
-        arr.push(item);
-      } else if (
-        item["transactionFrom"].includes(getvalue) ||
-        item["transactionFrom"].toLowerCase().includes(getvalue)
-      ) {
-        arr.push(item);
-      } else if (
-        item["transactionTo"].includes(getvalue) ||
-        item["transactionTo"].toLowerCase().includes(getvalue)
-      ) {
-        arr.push(item);
-      } else if (
-        item["transactionNotes"].includes(getvalue) ||
-        item["transactionNotes"].toLowerCase().includes(getvalue)
-      ) {
-        arr.push(item);
-      } else if (
-        item["transactionAmount"].includes(getvalue) ||
-        item["transactionAmount"].toLowerCase().includes(getvalue)
-      ) {
+      let flag = false;
+
+      Object.keys(item).map((key) => {
+        if (
+          item[key].includes(getvalue) ||
+          item[key].toLowerCase().includes(getvalue)
+        ) {
+          flag = true;
+        }
+        return 0;
+      });
+      if (flag) {
         arr.push(item);
       }
+      return 0;
     });
 
     setDataset(arr);
@@ -100,7 +74,6 @@ const TableComp = ({ data }) => {
     10: 10,
   };
   const pagination = (e) => {
-    console.log(e.target);
     if (data) {
       const page = e.target.id;
       const start = (page - 1) * limit;
@@ -109,9 +82,7 @@ const TableComp = ({ data }) => {
       setDataset(filter);
     }
   };
-  useEffect(() => {
-    setLimit(limit);
-  }, [limit]);
+
   const pageLimit = (e) => {
     const page = e.target.value || 5;
     setLimit(page);
@@ -137,7 +108,7 @@ const TableComp = ({ data }) => {
           <table className="table table-borderless" border="1px">
             <thead>
               <tr>
-                {Object.keys(initialValues).map((item, index) => (
+                {Object.keys(tableHeaders).map((item, index) => (
                   <th onClick={handleClick} id={item} key={index}>
                     {item.replace("transaction", "Transaction ")}
                   </th>
@@ -165,14 +136,12 @@ const TableComp = ({ data }) => {
                     />
                   </td>
                   <td>{item["transactionNotes"]}</td>
-
                   <td>
                     <Link to={"/transaction/" + item["transactionId"]}>
                       View
                     </Link>
                   </td>
                   <td>
-                    {" "}
                     <Link to={"/update-transaction/" + item["transactionId"]}>
                       Edit
                     </Link>

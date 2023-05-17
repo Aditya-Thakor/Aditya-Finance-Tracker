@@ -1,12 +1,7 @@
 import React from "react";
 
-const FormNoValidateSelect = ({option:[]}) => {
-  const {
-    label,
-    name,
-    options: [],
-    handleChange:()=>{},
-  } = props;
+const FormNoValidateSelect = (props) => {
+  const { label, name, options, handleChange } = props;
 
   return (
     <div className="row g-3 align-items-center">

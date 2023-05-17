@@ -121,3 +121,14 @@ export const inputFields = [
     type: "file",
   },
 ];
+
+export const tableHeaders = {
+  transactionDate: "Transaction Date",
+  transactionMY: "Month Year",
+  transactionType: "Transaction Type",
+  transactionFrom: "From Account",
+  transactionTo: "To Account",
+  transactionAmount: "Transaction Amount",
+  transactionReceipt: "Transaction Receipt",
+  transactionNotes: "Transaction Note",
+};

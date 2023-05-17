@@ -7,10 +7,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { UsersContext } from "../../context/UsersContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
   const { userData } = useContext(UsersContext);
-  console.log(userData);
+  const { token, setKey, setToken } = useContext(AuthContext);
+
+  useEffect(() => {
+    setToken(() => false);
+    return () => {};
+  }, []);
+
   const navigate = useNavigate();
   const schema = Yup.object().shape({
     email: Yup.string().required("Email is Required"),
@@ -49,16 +56,18 @@ const Login = () => {
       ) {
         setError(
           "password",
-          { type: "custome", message: "username/password incorrect" },
+          { type: "custom", message: "username/password incorrect" },
           { shouldFocus: false }
         );
       } else {
+        setToken(() => true);
+        setKey(() => Math.floor(Math.random() * 99999999999));
         navigate("/view-transactions");
       }
     } else {
       setError(
         "password",
-        { type: "custome", message: "There is no data in Context" },
+        { type: "custom", message: "There is no data in Context" },
         { shouldFocus: false }
       );
     }
@@ -67,7 +76,7 @@ const Login = () => {
   return (
     <div>
       <div className="nav">
-        <Link className="anchor" to="/">
+        <Link className="anchor" to="/register">
           Register Here
         </Link>
       </div>

@@ -61,7 +61,7 @@ const AddTransaction = () => {
   });
 
   const id = useParams().id;
-  console.log(id);
+
   // useEffect(() => {
   //   if (id) {
   //     setValues(store[id - 1]);
@@ -87,7 +87,7 @@ const AddTransaction = () => {
       ...data,
       transactionAmount: data.transactionAmount.toString(),
     };
-    console.log(filterData);
+
     let arr = transactionsData;
     FILE.readAsDataURL(filterData.transactionReceipt[0]);
     FILE.onloadend = async () => {
@@ -98,7 +98,7 @@ const AddTransaction = () => {
       dataLength > 0
         ? parseInt(transactionsData[dataLength - 1].transactionId) + 1
         : 1;
-    console.log(counter);
+
     filterData = { ...filterData, transactionId: counter.toString() };
 
     dataLength > 0 ? arr.push(filterData) : (arr = [filterData]);
