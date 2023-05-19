@@ -27,6 +27,7 @@ const FormInput = (props) => {
             className={className}
             type={type}
             name={name}
+            onChange={onChange}
             placeholder={placeholder}
             {...(register ? register(name) : null)}
           />
@@ -103,6 +104,7 @@ const FormInput = (props) => {
             name={name}
             id={id}
             {...(register ? register(name) : null)}
+            onChange={onChange}
           >
             <option value="">Select Option</option>
             {Object.entries(options).map(([val, option], i) =>
@@ -133,11 +135,13 @@ const FormInput = (props) => {
       <div className="col-auto">{renderField()}</div>
       <div className="col-auto">
         <span id="passwordHelpInline" className="form-text">
+          {errors && errors[name] && <p>{errors[name].message}</p>}
+          {/* 
           {errors && name !== "confirm"
             ? errors[name] && <p>{errors[name].message}</p>
             : errors["confirm"] && (
                 <p>Password and Confirm Password not match</p>
-              )}
+              )} */}
         </span>
       </div>
     </div>

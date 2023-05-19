@@ -26,7 +26,7 @@ const Register = () => {
     confirm: yup
       .string()
       .required()
-      .oneOf([yup.ref("pass")], "not match"),
+      .oneOf([yup.ref("pass")], "password/confirm password not match"),
   });
 
   const {

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getLocalData } from "../../../utils/helper";
 import FormInput from "../../../components/FormFields/FormInput";
+import { useDispatch } from "react-redux";
+import { deleteTransaction } from "../../../redux-dux/slices/transactionSlice";
 
 const TableComp = (props) => {
   const { data, tableHeader } = props;
-  const [getData, setGetData] = useState(data);
-  const [dataset, setDataset] = useState(getData);
+  const dispatch = useDispatch();
+
+  const [dataset, setDataset] = useState(data);
   const [limit, setLimit] = useState(5);
   const [order, setOrder] = useState({
     field: "",
@@ -75,32 +77,19 @@ const TableComp = (props) => {
     }
   };
 
-  const onPageChange = (e) => {
-    if (data) {
-      const page = e.target.id;
-      const start = (page - 1) * limit;
-      const end = page * limit;
-      const filter = data.slice(start, end);
-      setDataset(filter);
-    }
-  };
-
   const onDelete = (e) => {
     const id = e.target.id;
-    const gettingdata = getLocalData();
-    const newData = gettingdata.filter((item) => {
-      if (item["transaction"] !== id) {
-        return item;
-      }
-    });
-    localStorage.setItem("value", JSON.stringify(newData));
-
-    const group = data.filter((item) => {
-      if (item["transaction"] !== id) {
-        return item;
-      }
-    });
+    const group = data.filter((item) => item["transactionId"] !== id);
     setDataset(() => group);
+    dispatch(deleteTransaction(id));
+  };
+
+  const onPageChange = (e) => {
+    const page = e.target.id;
+    const start = (page - 1) * limit;
+    const end = page * limit;
+    const filter = data.slice(start, end);
+    setDataset(filter);
   };
 
   const pageLimit = (e) => {
@@ -112,16 +101,19 @@ const TableComp = (props) => {
     <div className="table-component">
       <div className="search-row">
         <div className="input-group rounded search-control">
-          <input
-            onChange={onSearch}
-            type="search"
+          <FormInput
+            type="text"
             className="form-control rounded"
             placeholder="Search"
-            aria-label="Search"
-            aria-describedby="search-addon"
+            onChange={onSearch}
           />
         </div>
-        <FormInput type="select" options={options} handleChange={pageLimit} />
+        <FormInput
+          type="select"
+          className="form-select"
+          options={options}
+          onChange={pageLimit}
+        />
       </div>
       {dataset && dataset.length > 0 ? (
         <div>
@@ -153,16 +145,18 @@ const TableComp = (props) => {
                   </td>
                   <td>{item["transactionNotes"]}</td>
                   <td>
-                    <Link to={"/transaction/" + item["transaction"]}>View</Link>
+                    <Link to={"/transaction/" + item["transactionId"]}>
+                      View
+                    </Link>
                   </td>
                   <td>
-                    <Link to={"/update-transaction/" + item["transaction"]}>
+                    <Link to={"/update-transaction/" + item["transactionId"]}>
                       Edit
                     </Link>
                   </td>
                   <td
                     className="delete"
-                    id={item["transaction"]}
+                    id={item["transactionId"]}
                     onClick={onDelete}
                   >
                     Delete

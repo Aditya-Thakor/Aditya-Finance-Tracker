@@ -1,45 +1,48 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { credits, loginField } from "../../utils/const";
+import { loginField } from "../../utils/const";
 import FormButton from "../../components/FormFields/FormButton";
 import FormInput from "../../components/FormFields/FormInput";
 import { useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 const Login = () => {
   const navigate = useNavigate();
-
+  const cookie = new Cookies();
   const users = useSelector((state) => state.users);
-  const [credentials, setCredentials] = useState(credits);
+
+  const schema = Yup.object().shape({
+    email: Yup.string().required("Email Field is Empty"),
+    pass: Yup.string().required("Password Field is Required"),
+  });
 
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const onClick = (e) => {
+  const onSubmit = (data) => {
     users.map((item) => {
-      if (
-        item["email"] === credentials["email"].toLowerCase() &&
-        item["pass"] === credentials["pass"]
-      ) {
+      if (item["email"] === data["email"] && item["pass"] === data["pass"]) {
+        cookie.set("auth", "shadjkhasjkdasdhjkagsfjkjkasdfglkjasdlkgjl", {
+          maxAge: 60 * 60 * 1024,
+        });
         navigate("/view-transactions");
       }
       return 0;
     });
-  };
-
-  const onChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setCredentials({ ...credentials, [name]: value });
-  };
-
-  const onSubmit = (data) => {
-    console.log(data);
+    setError(
+      "pass",
+      { type: "custome", message: "email/password incorrect" },
+      { shouldFocus: false }
+    );
   };
 
   return (
@@ -56,15 +59,15 @@ const Login = () => {
             <FormInput
               key={index}
               className="form-inputs"
-              errors={errors}
               register={register}
+              errors={errors}
               {...item}
             />
           ))}
+          <div className="submit-data">
+            <FormButton name="Login" type="submit" className="inputs" />
+          </div>
         </form>
-        <div className="submit-data">
-          <FormButton name="Login" type="button" handleClick={onClick} />
-        </div>
       </div>
     </>
   );

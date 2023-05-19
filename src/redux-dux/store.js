@@ -4,7 +4,7 @@ import transactionSlice from "./slices/transactionSlice";
 
 const store = configureStore({
   reducer: {
-    transaction: transactionSlice,
+    transactions: transactionSlice,
     users: userSlice,
   },
 });

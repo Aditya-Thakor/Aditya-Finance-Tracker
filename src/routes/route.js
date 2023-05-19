@@ -1,18 +1,10 @@
 import { lazy } from "react";
 
-import Cookies from "universal-cookie";
-
-const cookie = new Cookies();
 const protectedRoutes = [
   {
     path: "/add-transaction",
     component: lazy(() => import("../pages/transactions/AddTransaction")),
     protected: true,
-    canActive: () => {
-      if (!cookie.length > 0) {
-        // navigate("/login");
-      }
-    },
   },
   {
     path: "/view-transactions",
@@ -22,6 +14,11 @@ const protectedRoutes = [
   {
     path: "/transaction/:id",
     component: lazy(() => import("../pages/transactions/Transaction")),
+    protected: true,
+  },
+  {
+    path: "/update-transaction/:id",
+    component: lazy(() => import("../pages/transactions/AddTransaction")),
     protected: true,
   },
 ];

@@ -123,3 +123,18 @@ button:hover {
   color: rgb(247, 252, 252);
   background-color: rgb(7, 112, 239);
 }
+
+.edit-data img {
+  height: 80px;
+  border: 1px solid;
+  margin: 20px;
+}
+
+.edit-data span {
+  border: 5px solid red;
+  padding: 10px 13px 10px 10px;
+  border-radius: 50%;
+  font-weight: bolder;
+  color: rgb(163, 50, 1);
+  cursor: pointer;
+}

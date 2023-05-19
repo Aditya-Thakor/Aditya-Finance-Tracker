@@ -1,192 +1,136 @@
 import React, { useEffect, useState } from "react";
+import * as yup from "yup";
 import { useNavigate, Link, useParams } from "react-router-dom";
-import { initialValues, selectField, inputFields } from "../../utils/const";
+import { addtransationField, initialValues } from "../../utils/const";
+import { get, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addTransaction,
+  deleteTransaction,
+} from "../../redux-dux/slices/transactionSlice";
 import FormButton from "../../components/FormFields/FormButton";
-import { getLocalData } from "../../utils/helper";
 import FormInput from "../../components/FormFields/FormInput";
 
 const AddTransaction = () => {
   const navigate = useNavigate();
-  const [errmsg, setErrmsg] = useState(initialValues);
-  const [values, setValues] = useState(initialValues);
+  const dispatch = useDispatch(addTransaction);
+
   const { id } = useParams();
-  const store = getLocalData();
+  const [editData, setEditData] = useState({});
+  const [imageDisplay, setImageDisplay] = useState(true);
+  const transactionsData = useSelector((state) => state.transactions);
+
+  const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
+  const FILE_MAX_SIZE = 1024 * 1024;
+
+  const schema = yup.object().shape({
+    transactionDate: yup.date().required().typeError("Date is Required"),
+    transactionMY: yup.string().required("Month/Year is Required"),
+    transactionType: yup.string().required("Type is Required"),
+    transactionFrom: yup.string().required("From is Required"),
+    transactionTo: yup
+      .string()
+      .required("To is Required")
+      .not(
+        [yup.ref("transactionFrom")],
+        "From and To account should be not same"
+      ),
+    transactionAmount: yup
+      .number()
+      .required()
+      .typeError("Amount is Required")
+      .positive()
+      .min(1),
+    transactionNotes: yup.string().required("Notes is Required").max(250),
+    transactionReceipt: yup
+      .mixed()
+      .required()
+      .test("transactionReceipt", "File is required", (File) => {
+        return File.length > 0 ? true : false;
+      })
+      .test(
+        "transactionReceipt",
+        "Image Format should be JPEG/JPG/PNG",
+        (File) => {
+          if (File.length > 0) {
+            return SUPPORTED_FORMATS.includes(File[0].type);
+          }
+        }
+      )
+      .test("transactionReceipt", "Size should be less than 1MB", (File) => {
+        if (File.length > 0) return File[0].size > FILE_MAX_SIZE ? false : true;
+      }),
+  });
 
   useEffect(() => {
     if (id) {
-      setValues(store[id - 1]);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (store) {
-      store.filter((item) => {
-        if (item.transaction === id) {
-          setValues({ ...values, ...item });
-        }
+      transactionsData.filter((transaction) => {
+        return (
+          transaction.transactionId === id && setEditData(() => transaction)
+        );
       });
     }
   }, []);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    let arr = [];
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    values: id ? editData : null,
+  });
 
-    Object.values(errmsg).map((msg, index) => {
-      if (!(msg === "")) arr.push("err");
-      return 0;
-    });
-
-    if (!(arr.length > 0)) {
-      let getvalue = getLocalData();
-
-      if (id) {
-        if (getvalue) {
-          let counter = 0;
-          getvalue.forEach((element) => {
-            counter++;
-            if (element["transaction"] === getvalue[id - 1]["transaction"]) {
-              getvalue.splice(counter - 1, 1);
-            }
-          });
-        }
-      }
-      getvalue != null ? getvalue.push(values) : (getvalue = [values]);
-      localStorage.setItem("value", JSON.stringify(getvalue));
-      navigate("/view-transactions");
-    }
-  };
-
-  const onSelect = (e) => {
-    const name = e.target.name;
-    const type = e.target.type;
-    let value = e.target.value.trim();
-
-    // const bool = validation()
-
-    const emptyField = (name, value) => {
-      value === ""
-        ? type === "select-one"
-          ? setErrmsg({
-              ...errmsg,
-              [name]: name.replace("transaction", "") + " is Required ",
-            })
-          : setErrmsg({
-              ...errmsg,
-              [name]: name.replace("transaction", "") + " is Required",
-            })
-        : setErrmsg({ ...errmsg, [name]: "" });
+  // Functions
+  const onSubmit = async (data) => {
+    const FILE = new FileReader();
+    const dataLength = transactionsData.length;
+    let counter = 0;
+    let filterData = {
+      ...data,
+      transactionAmount: data.transactionAmount.toString(),
     };
 
-    switch (name) {
-      case "transactionDate":
-        emptyField(name, value);
-        break;
+    FILE.readAsDataURL(filterData.transactionReceipt[0]);
+    FILE.onloadend = async () => {
+      filterData.transactionReceipt = FILE.result;
+    };
 
-      case "transactionAmount":
-        if (value === "") {
-          emptyField(name, value);
-        } else if (!/^[0-9]*$/.test(value)) {
-          setErrmsg({ ...errmsg, [name]: "Enter Digits only" });
-        } else {
-          setErrmsg({ ...errmsg, [name]: "" });
-        }
-        break;
+    counter =
+      dataLength > 0
+        ? parseInt(transactionsData[dataLength - 1].transactionId) + 1
+        : 1;
 
-      case "transactionFrom":
-        emptyField(name, value);
-        break;
+    const date = new Date(data.transactionDate);
+    let getdate = date.getDate();
+    let getmonth = date.getMonth();
+    let getyear = date.getFullYear();
 
-      case "transactionTo":
-        emptyField(name, value);
-        break;
-
-      case "transactionType":
-        emptyField(name, value);
-        break;
-
-      case "transactionMY":
-        emptyField(name, value);
-        break;
-
-      case "transactionNotes":
-        emptyField(name, value);
-        if (value.length >= 250)
-          setErrmsg({
-            ...errmsg,
-            [name]: "Length Should be less than 250 letters.",
-          });
-        break;
-      case "transactionReceipt":
-        let files = e.target.files[0];
-
-        if (files === undefined)
-          setErrmsg({
-            ...errmsg,
-            [name]: name.replace("transaction", "") + " is Required",
-          });
-
-        if (files && files !== undefined) {
-          if (files.size > 1000000)
-            setErrmsg({
-              ...errmsg,
-              [name]: "Your image file is simply too big",
-            });
-          else if (
-            files.type === "image/jpg" ||
-            files.type === "image/png" ||
-            files.type === "image/jpeg"
-          ) {
-            let file = new FileReader();
-            file.readAsDataURL(files);
-            file.onloadend = () => {
-              setValues({ ...values, [name]: file.result });
-              setErrmsg({ ...errmsg, [name]: "" });
-            };
-          } else {
-            setErrmsg({ ...errmsg, [name]: "The Format is not supported" });
-          }
-        }
-        break;
-
-      default:
+    if (getdate < 10) {
+      getdate = "0" + getdate;
     }
-    if (!(name === "transactionReceipt")) {
-      setValues({
-        ...values,
-        [name]: value,
-      });
+
+    if (getmonth < 10) {
+      getmonth = "0" + getmonth;
     }
-  };
 
-  const onButtonClick = () => {
-    let obj = {};
-    let count = 1;
-    let getvalue = getLocalData();
+    const fullDate = getyear + "-" + getmonth + "-" + getdate;
+    filterData = {
+      ...filterData,
+      transactionId: id ? id : counter.toString(),
+      transactionDate: fullDate,
+    };
 
-    id
-      ? (count = id)
-      : getvalue !== null
-      ? (count = getvalue.length + 1)
-      : (count = 1);
-
-    setValues({ ...values, transaction: count.toString() });
-    Object.keys(values).map((item, index) => {
-      if (item !== "transaction") {
-        if (values[item] === "") {
-          obj = {
-            ...obj,
-            [item]: item.replace("transaction", "") + " is Required",
-          };
-        }
-      }
-      return 0;
-    });
-    setErrmsg({ ...errmsg, ...obj });
+    setTimeout(() => {
+      id && dispatch(deleteTransaction(id));
+      dispatch(addTransaction({ ...filterData }));
+      navigate("/view-transactions");
+    }, 100);
   };
 
   return (
-    <form action="" method="post" onSubmit={onSubmit}>
+    <form action="" method="post" onSubmit={handleSubmit(onSubmit)}>
       <div className="nav">
         <Link className="anchor" to="/view-transactions">
           View Transaction
@@ -195,37 +139,27 @@ const AddTransaction = () => {
 
       <div className="container">
         <div className="section">
-          {Object.values(selectField).map((item, index) => (
-            <div key={index}>
-              <FormInput
-                type="select"
-                className="form-select"
-                value={values}
-                onSelect={onSelect}
-                errmsg={errmsg}
-                {...item}
-              />
-            </div>
-          ))}
-
-          {inputFields.map((attr, i) => (
+          {addtransationField.map((field, i) => (
             <div key={i}>
-              <FormInput
-                className="form-control rounded"
-                errmsg={errmsg}
-                onSelect={onSelect}
-                value={values}
-                {...attr}
-              />
+              {id && imageDisplay && field.name === "transactionReceipt" ? (
+                <div className="edit-data">
+                  <label htmlFor="inputPassword6" className="col-form-label">
+                    Enter Transaction Receipt :
+                  </label>
+                  <img
+                    alt="transactionReceipt"
+                    src={editData["transactionReceipt"]}
+                  />
+                  <span onClick={() => setImageDisplay(() => false)}> X </span>
+                </div>
+              ) : (
+                <FormInput register={register} errors={errors} {...field} />
+              )}
             </div>
           ))}
 
           <div className="submit-data">
-            <FormButton
-              type="submit"
-              name="add transaction"
-              handleClick={onButtonClick}
-            />
+            <FormButton type="submit" name="add transaction" />
           </div>
         </div>
       </div>

@@ -1,38 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TableComp from "./components/TableComp";
 import { Link } from "react-router-dom";
-import { getLocalData } from "../../utils/helper";
 import FormInput from "../../components/FormFields/FormInput";
+import { useSelector } from "react-redux";
+import { viewTableHeader } from "../../utils/const";
 
 const ViewTransaction = () => {
-  const [locals, setLocal] = useState(() => getLocalData());
+  const transactionsData = useSelector((state) => state.transactions);
+
+  const [cloneData, setCloneData] = useState(transactionsData);
   const [group, setGroups] = useState([]);
   const [groupField, setGroupField] = useState();
 
-  // Initials
+  useEffect(() => {
+    setCloneData(() => transactionsData);
+  }, [transactionsData]);
 
-  const initialValues = {
-    transactionDate: "Transaction Date",
-    transactionMY: "Month Year",
-    transactionType: "Transaction Type",
-    transactionFrom: "From Account",
-    transactionTo: "To Account",
-    transactionAmount: "Transaction Amount",
-    transactionReceipt: "Transaction Receipt",
-    transactionNotes: "Transaction Note",
-  };
-
-  const onGroupBy = (e) => {
-    const name = e.target.value;
-    setGroupField(name);
-
-    locals.reduce((groups, product) => {
-      groups[product[name]] = groups[product[name]] ?? [];
-      groups[product[name]].push(product);
+  useEffect(() => {
+    cloneData.reduce((groups, product) => {
+      groups[product[groupField]] = groups[product[groupField]] ?? [];
+      groups[product[groupField]].push(product);
       setGroups(groups);
       return groups;
     }, {});
-  };
+  }, [groupField, cloneData]);
 
   return (
     <>
@@ -43,25 +34,21 @@ const ViewTransaction = () => {
 
         <FormInput
           type="select"
-          label="Group by Field Name : "
-          options={initialValues}
-          onSelect={onGroupBy}
+          className="form-select"
+          label="Group By : "
+          options={viewTableHeader}
+          onChange={(e) => setGroupField(e.target.value)}
         />
       </div>
 
       {group.length === 0 ? (
-        <TableComp
-          data={locals}
-          tableHeader={initialValues}
-          groupField={groupField}
-        />
+        <TableComp data={cloneData} tableHeader={viewTableHeader} />
       ) : (
         Object.keys(group).map((item, index) => (
           <div key={index}>
             <TableComp
               data={group[item]}
-              tableHeader={initialValues}
-              groupField={groupField}
+              tableHeader={viewTableHeader}
               // onDelete={onDelete}
             />
           </div>
