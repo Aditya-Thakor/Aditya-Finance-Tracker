@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import FormNoValidateSelect from "../../../components/formFields/FormNoValidateSelect";
 import { tableHeaders } from "../../../utils/const";
+import { TransactionContext } from "../../../context/TransactionContext";
 
 const TableComp = ({ data }) => {
-  const [getData, setGetData] = useState(data);
+  const { setTransactionsData, transactionsData } =
+    useContext(TransactionContext);
+
   const [dataset, setDataset] = useState(data);
   const [limit, setLimit] = useState(5);
   const [order, setOrder] = useState({
@@ -44,18 +47,37 @@ const TableComp = ({ data }) => {
     let arr = [];
 
     data.map((item) => {
-      let flag = false;
-
-      Object.keys(item).map((key) => {
-        if (
-          item[key].includes(getvalue) ||
-          item[key].toLowerCase().includes(getvalue)
-        ) {
-          flag = true;
-        }
-        return 0;
-      });
-      if (flag) {
+      if (getvalue.includes(item["transactionDate"])) {
+        arr.push(item);
+      } else if (
+        item["transactionMY"].includes(getvalue) ||
+        item["transactionMY"].toLowerCase().includes(getvalue)
+      ) {
+        arr.push(item);
+      } else if (
+        item["transactionType"].includes(getvalue) ||
+        item["transactionType"].toLowerCase().includes(getvalue)
+      ) {
+        arr.push(item);
+      } else if (
+        item["transactionFrom"].includes(getvalue) ||
+        item["transactionFrom"].toLowerCase().includes(getvalue)
+      ) {
+        arr.push(item);
+      } else if (
+        item["transactionTo"].includes(getvalue) ||
+        item["transactionTo"].toLowerCase().includes(getvalue)
+      ) {
+        arr.push(item);
+      } else if (
+        item["transactionNotes"].includes(getvalue) ||
+        item["transactionNotes"].toLowerCase().includes(getvalue)
+      ) {
+        arr.push(item);
+      } else if (
+        item["transactionAmount"].includes(getvalue) ||
+        item["transactionAmount"].toLowerCase().includes(getvalue)
+      ) {
         arr.push(item);
       }
       return 0;
@@ -83,6 +105,23 @@ const TableComp = ({ data }) => {
     }
   };
 
+  const onDelete = (e) => {
+    const id = e.target.id;
+    const gettingdata = transactionsData;
+    const newData = gettingdata.filter((item) => {
+      if (item["transactionId"] !== id) {
+        return item;
+      }
+    });
+
+    setTransactionsData(() => newData);
+    const group = data.filter((item) => {
+      if (item["transactionId"] !== id) {
+        return item;
+      }
+    });
+    setDataset(() => group);
+  };
   const pageLimit = (e) => {
     const page = e.target.value || 5;
     setLimit(page);
@@ -115,6 +154,7 @@ const TableComp = ({ data }) => {
                 ))}
                 <th>Action</th>
                 <th>Edit</th>
+                <th>Delete</th>
               </tr>
             </thead>
 
@@ -145,6 +185,13 @@ const TableComp = ({ data }) => {
                     <Link to={"/update-transaction/" + item["transactionId"]}>
                       Edit
                     </Link>
+                  </td>
+                  <td
+                    className="delete"
+                    id={item["transactionId"]}
+                    onClick={onDelete}
+                  >
+                    Delete
                   </td>
                 </tr>
               ))}

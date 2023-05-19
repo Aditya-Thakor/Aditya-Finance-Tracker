@@ -14,13 +14,14 @@ const routing = () => {
             path={route.path}
             element={
               <Suspense fallback={<h1>Loading...</h1>}>
-                {route.protected ? (
+                {/* {route.protected ? (
                   <AuthGuard>
                     <route.component />
                   </AuthGuard>
                 ) : (
                   <route.component />
-                )}
+                )} */}
+                <route.component hasError />
               </Suspense>
             }
           />

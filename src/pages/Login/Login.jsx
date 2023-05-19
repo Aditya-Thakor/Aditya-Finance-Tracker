@@ -11,7 +11,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
   const { userData } = useContext(UsersContext);
-  const { token, setKey, setToken } = useContext(AuthContext);
+  const { setKey, setToken } = useContext(AuthContext);
 
   useEffect(() => {
     setToken(() => false);
@@ -50,20 +50,22 @@ const Login = () => {
 
   const checkUser = (data) => {
     if (userData.length > 0) {
-      if (
-        userData[0].email !== data.email ||
-        userData[0].password !== data.password
-      ) {
-        setError(
-          "password",
-          { type: "custom", message: "username/password incorrect" },
-          { shouldFocus: false }
-        );
-      } else {
-        setToken(() => true);
-        setKey(() => Math.floor(Math.random() * 99999999999));
-        navigate("/view-transactions");
-      }
+      userData.map((_, i) => {
+        if (
+          userData[i].email !== data.email ||
+          userData[i].password !== data.password
+        ) {
+          setError(
+            "password",
+            { type: "custom", message: "username/password incorrect" },
+            { shouldFocus: false }
+          );
+        } else {
+          setToken(() => true);
+          setKey(() => Math.floor(Math.random() * 99999999999));
+          navigate("/view-transactions");
+        }
+      });
     } else {
       setError(
         "password",

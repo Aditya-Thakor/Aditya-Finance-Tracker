@@ -1,15 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
-
 import { Link } from "react-router-dom";
 import TableComp from "./components/TableComp";
 import { defaultTransactions } from "../../defaults/default.transactions";
 import { TransactionContext } from "../../context/TransactionContext";
 import FormNoValidateSelect from "../../components/formFields/FormNoValidateSelect";
+import AddTransaction from "./AddTransaction";
 
 const ViewTransaction = () => {
   const { transactionsData } = useContext(TransactionContext);
   const [locals, setLocal] = useState(transactionsData);
   const [group, setGroups] = useState([]);
+
+  useEffect(() => {
+    setLocal(transactionsData);
+  }, [transactionsData]);
 
   // Initials
 
@@ -24,15 +28,11 @@ const ViewTransaction = () => {
     transactionNotes: "Transaction Note",
   };
 
-  useEffect(() => {}, [group, locals]);
-
   const groupBy = (e) => {
-    let name = e.target.value;
-
+    const name = e.target.value;
     locals.reduce((groups, product) => {
-      let transactionFrom = product[name];
-      groups[transactionFrom] = groups[transactionFrom] ?? [];
-      groups[transactionFrom].push(product);
+      groups[product[name]] = groups[product[name]] ?? [];
+      groups[product[name]].push(product);
       setGroups(groups);
       return groups;
     }, {});

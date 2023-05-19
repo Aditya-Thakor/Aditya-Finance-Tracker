@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { TransactionContext } from "../../context/TransactionContext";
+import AddTransaction from "./AddTransaction";
 
 const Transaction = (props) => {
-  let id = useParams().number;
+  const { id } = useParams();
 
   const [Data, setData] = useState({});
   const [hold, setHold] = useState(null);

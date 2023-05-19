@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, MemoryRouter } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { routing as Routes } from "./routes/routing";
 

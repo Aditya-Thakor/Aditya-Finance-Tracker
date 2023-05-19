@@ -114,3 +114,7 @@ button:hover {
   color: rgb(247, 252, 252);
   background-color: rgb(7, 112, 239);
 }
+.delete {
+  cursor: pointer;
+  color: red;
+}

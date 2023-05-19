@@ -16,6 +16,11 @@ const protectedRoutes = [
     component: lazy(() => import("../pages/transactions/Transaction")),
     protected: true,
   },
+  {
+    path: "/update-transaction/:id",
+    component: lazy(() => import("../pages/transactions/AddTransaction")),
+    protected: true,
+  },
 ];
 
 const unProtectedRoutes = [

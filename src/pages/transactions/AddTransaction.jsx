@@ -12,11 +12,23 @@ import { TransactionContext } from "../../context/TransactionContext";
 
 const AddTransaction = () => {
   const navigate = useNavigate();
+
   const { transactionsData, setTransactionsData } =
     useContext(TransactionContext);
+  const { id } = useParams();
 
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
   const FILE_MAX_SIZE = 1024 * 1024;
+
+  const [editData, setEditData] = useState({});
+
+  useEffect(() => {
+    transactionsData.filter((item) => {
+      if (item.transactionId === id) {
+        setEditData({ ...item });
+      }
+    });
+  }, []);
 
   const schema = Yup.object().shape({
     transactionDate: Yup.string().required("Date is Required"),
@@ -58,25 +70,8 @@ const AddTransaction = () => {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    values: id ? editData : initialValues,
   });
-
-  const id = useParams().id;
-
-  // useEffect(() => {
-  //   if (id) {
-  //     setValues(store[id - 1]);
-  //   }
-  // }, [id]);
-
-  // useEffect(() => {
-  //   if (store) {
-  //     store.filter((item) => {
-  //       if (item.transaction === id) {
-  //         setValues({ ...values, ...item });
-  //       }
-  //     });
-  //   }
-  // }, []);
 
   const submitted = async (data) => {
     const FILE = new FileReader();
@@ -103,6 +98,7 @@ const AddTransaction = () => {
 
     dataLength > 0 ? arr.push(filterData) : (arr = [filterData]);
 
+    console.log(arr);
     setTransactionsData(arr);
     navigate("/view-transactions");
   };
