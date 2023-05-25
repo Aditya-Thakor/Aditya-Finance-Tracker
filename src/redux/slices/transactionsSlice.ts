@@ -11,9 +11,14 @@ export const transactionsSlice = createSlice({
       state: TransactionInterface[],
       action: PayloadAction<TransactionInterface>
     ): void => void state.push(action.payload),
+
+    deleteTransaction: (
+      state: TransactionInterface[],
+      action: PayloadAction<number>
+    ): void => {},
   },
 });
 
 const { actions, reducer } = transactionsSlice;
-export const { addTransaction } = actions;
+export const { addTransaction, deleteTransaction } = actions;
 export default reducer;

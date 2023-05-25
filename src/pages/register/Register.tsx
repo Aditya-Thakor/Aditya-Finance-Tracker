@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { registerField } from "../../utils/const";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,10 +13,10 @@ const Register = () => {
   const navigate = useNavigate();
 
   type TRegister = {
-    username?: string;
-    password?: string;
-    confirm?: string;
-    email?: string;
+    username: string;
+    password: string;
+    confirm: string;
+    email: string;
   };
 
   const schema: yup.ObjectSchema<TRegister> = yup.object().shape({
@@ -42,7 +42,7 @@ const Register = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
-  const onSubmit = (data: TRegister): void => {
+  const onSubmit: SubmitHandler<FieldValues> = (data): void => {
     delete data?.confirm;
     dispatch(addUser(data));
     navigate("/login");

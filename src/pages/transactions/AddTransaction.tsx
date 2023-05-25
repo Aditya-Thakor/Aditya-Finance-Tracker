@@ -1,25 +1,34 @@
 import * as yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FormButton from "../../components/formfields/FormButton";
 import FormInputs from "../../components/formfields/FormInputs";
 import { addTransactionField } from "../../utils/const";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useDispatch } from "react-redux";
+import { addTransaction } from "../../redux/slices/transactionsSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 const AddTransaction = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const transactionData = useSelector((state: RootState) => state.transactions);
+
   const FILE_MAX_SIZE = 1024 * 1024;
   const FILE_TYPE = ["image/jpg", "image/jpeg", "image/png"];
 
-  type TAddTransaction = {
+  interface TAddTransaction {
     transactionDate: Date;
     transactionMY: string;
-    transactionAmount: number | string;
+    transactionAmount: number;
     transactionNote: string;
     transactionTo: string;
     transactionFrom: string;
     transactionType: string;
-    transactionReceipt: object;
-  };
+    transactionReceipt: any;
+  }
 
   const addSchema: yup.ObjectSchema<TAddTransaction> = yup.object().shape({
     transactionDate: yup.date().required().typeError("Date is required"),
@@ -37,7 +46,7 @@ const AddTransaction = () => {
     transactionReceipt: yup
       .mixed()
       .required()
-      .test("transactionReceipt", "Receipt is Required", (file: any): boolean =>
+      .test("transactionReceipt", "Receipt is Required", (file: any) =>
         file.length > 0 ? true : false
       )
       .test(
@@ -52,7 +61,7 @@ const AddTransaction = () => {
       .test(
         "transactionReceipt",
         "Size should be less than 1MB",
-        (file: any) => {
+        (file: any): any => {
           if (file.length > 0)
             return FILE_MAX_SIZE > file[0].size ? true : false;
         }
@@ -67,7 +76,47 @@ const AddTransaction = () => {
     resolver: yupResolver(addSchema),
   });
 
-  const onSubmit: SubmitHandler<TAddTransaction> = (data): void => {};
+  const imageBase64 = async (
+    file: FileList
+  ): Promise<string | ArrayBuffer | null> => {
+    const FILE = new FileReader();
+    FILE.readAsDataURL(file[0]);
+
+    return new Promise((resolve, rejects) => {
+      FILE.onloadend = () => {
+        resolve(FILE.result);
+      };
+    });
+  };
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    let filterData = { ...data };
+
+    const dateobj = new Date(data.transactionDate);
+    let date: string | number = dateobj.getDate();
+    let month: string | number = dateobj.getMonth() + 1;
+    const year = dateobj.getFullYear();
+
+    if (date < 10) date = "0" + date;
+    if (month < 10) month = "0" + month;
+    const tdate = year + "-" + month + "-" + date;
+
+    const fileBase64: string | ArrayBuffer | null = await imageBase64(
+      data.transactionReceipt
+    );
+
+    const tlength = transactionData.length + 1;
+
+    filterData = {
+      ...filterData,
+      transactionDate: tdate,
+      transactionReceipt: fileBase64,
+      transactionId: tlength,
+    };
+
+    dispatch(addTransaction(filterData));
+    navigate("/view-transactions");
+  };
 
   return (
     <div>

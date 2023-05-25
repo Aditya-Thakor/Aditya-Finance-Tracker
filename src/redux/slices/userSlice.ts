@@ -4,6 +4,7 @@ interface obj {
   username?: string;
   password?: string;
   email?: string;
+  confirm?: string;
 }
 
 const initialState: obj[] = [];

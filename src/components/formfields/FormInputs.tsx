@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { FieldErrors, UseFormRegister, FieldValues } from "react-hook-form";
 
 type InputProps = {
-  label: string;
+  label?: string;
   name: string;
   type: string;
   className?: string;
@@ -11,9 +11,14 @@ type InputProps = {
   cols?: number;
   errors?: FieldErrors;
   options?: object;
+  onchange?: React.ChangeEventHandler<unknown>;
   register?: UseFormRegister<FieldValues>;
 };
 
+// const onchagetTesting = (e: any) => {
+//   type a = ReturnType<typeof e>;
+//   console.log(typeof a);
+// };
 const FormInputs = (props: InputProps) => {
   const {
     name,
@@ -26,6 +31,7 @@ const FormInputs = (props: InputProps) => {
     rows,
     cols,
     label,
+    onchange,
   } = props;
 
   const errmsg = (errors && errors[name] && errors[name]?.message) as string;
@@ -40,6 +46,7 @@ const FormInputs = (props: InputProps) => {
             name={name}
             placeholder={placeholder}
             {...(register ? register(name) : null)}
+            onChange={onchange}
           />
         );
 
@@ -48,13 +55,17 @@ const FormInputs = (props: InputProps) => {
           <select
             className="form-select"
             {...(register ? register(name) : null)}
+            onChange={onchange}
           >
             <option value="">Select Option</option>
-            {Object.entries(options as object).map(([val, opt], i) => (
-              <option key={i} value={val}>
-                {opt}
-              </option>
-            ))}
+            {Object.entries(options as object).map(
+              ([val, opt], i) =>
+                val !== "transactionReceipt" && (
+                  <option key={i} value={val}>
+                    {opt}
+                  </option>
+                )
+            )}
           </select>
         );
 

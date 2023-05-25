@@ -52,9 +52,9 @@ export const addTransactionField = [
     type: "select",
     label: "Transaction Type : ",
     options: {
-      homeexpense: "Home Expense",
-      income: "Income",
-      personalexpense: "Personal Expense",
+      "Home Expense": "Home Expense",
+      Income: "Income",
+      "Personal Expense": "Personal Expense",
     },
   },
   {
@@ -62,10 +62,10 @@ export const addTransactionField = [
     type: "select",
     label: "Transaction From : ",
     options: {
-      personalaccount: "Personal Account",
-      realliving: "Real Living",
-      mydreamhome: "My Dream Home",
-      fullcircle: "Full Circle",
+      "Personal Account": "Personal Account",
+      "Real Living": "Real Living",
+      "My Dream Home": "My Dream Home",
+      "Full Circle": "Full Circle",
     },
   },
   {
@@ -73,10 +73,10 @@ export const addTransactionField = [
     type: "select",
     label: "Transaction To : ",
     options: {
-      personalaccount: "Personal Account",
-      realliving: "Real Living",
-      mydreamhome: "My Dream Home",
-      fullcircle: "Full Circle",
+      "Personal Account": "Personal Account",
+      "Real Living": "Real Living",
+      "My Dream Home": "My Dream Home",
+      "Full Circle": "Full Circle",
     },
   },
   {
@@ -99,13 +99,24 @@ export const addTransactionField = [
 ];
 
 export interface TransactionInterface {
-  transactionId: string;
-  transactionDate: string;
-  transactionMY: string;
-  transactionAmount: number;
-  transactionNote: string;
-  transactionTo: string;
-  transactionFrom: string;
-  transactionType: string;
-  transactionReceipt: string;
+  transactionId?: number;
+  transactionDate?: string;
+  transactionMY?: string;
+  transactionAmount?: number;
+  transactionNote?: string;
+  transactionTo?: string;
+  transactionFrom?: string;
+  transactionType?: string;
+  transactionReceipt?: string;
 }
+
+export const tableHeader: object = {
+  transactionDate: "Transaction Date",
+  transactionMY: "Transaction M/Y",
+  transactionType: "Transaction Type",
+  transactionFrom: "Transaction Form",
+  transactionTo: "Transaction To",
+  transactionAmount: "Transaction Amount",
+  transactionNote: "Transaction Note",
+  transactionReceipt: "Transaction Receipt",
+};
