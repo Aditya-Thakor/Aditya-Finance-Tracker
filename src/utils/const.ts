@@ -98,19 +98,7 @@ export const addTransactionField = [
   },
 ];
 
-export interface TransactionInterface {
-  transactionId?: number;
-  transactionDate?: string;
-  transactionMY?: string;
-  transactionAmount?: number;
-  transactionNote?: string;
-  transactionTo?: string;
-  transactionFrom?: string;
-  transactionType?: string;
-  transactionReceipt?: string;
-}
-
-export const tableHeader: object = {
+export const tableHeader = {
   transactionDate: "Transaction Date",
   transactionMY: "Transaction M/Y",
   transactionType: "Transaction Type",

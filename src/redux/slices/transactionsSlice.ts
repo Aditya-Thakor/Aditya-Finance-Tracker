@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { TransactionInterface } from "../../utils/const";
+import { TransactionInterface } from "../../modals/transactions";
 
 const initialState: TransactionInterface[] = [];
 
@@ -8,14 +8,18 @@ export const transactionsSlice = createSlice({
   initialState,
   reducers: {
     addTransaction: (
-      state: TransactionInterface[],
+      state,
       action: PayloadAction<TransactionInterface>
     ): void => void state.push(action.payload),
 
     deleteTransaction: (
-      state: TransactionInterface[],
+      state,
       action: PayloadAction<number>
-    ): void => {},
+    ): TransactionInterface[] => {
+      return state.filter(
+        (transaction) => transaction.transactionId !== action.payload
+      );
+    },
   },
 });
 

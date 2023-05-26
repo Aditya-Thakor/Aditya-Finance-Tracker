@@ -7,35 +7,14 @@ import FormInputs from "../../components/formfields/FormInputs";
 import FormButton from "../../components/formfields/FormButton";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../redux/slices/userSlice";
+import { validRegsiter } from "../../utils/yupValidations";
+import { TRegister } from "../../modals/register";
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  type TRegister = {
-    username: string;
-    password: string;
-    confirm: string;
-    email: string;
-  };
-
-  const schema: yup.ObjectSchema<TRegister> = yup.object().shape({
-    username: yup.string().required("Username is Required"),
-    password: yup
-      .string()
-      .required("Password is Required")
-      .min(8, "Password must be at least 8 characters")
-      .max(16, "Password must be at most 16 characters"),
-    email: yup
-      .string()
-      .required("Email is Required")
-      .email("Invalid Email Address"),
-    confirm: yup
-      .string()
-      .required("Confirm Password is Required")
-      .oneOf([yup.ref("password")], "Password & Confirm Password not Match"),
-  });
-
+  const schema: yup.ObjectSchema<TRegister> = validRegsiter;
   const {
     register,
     handleSubmit,
@@ -44,7 +23,7 @@ const Register = () => {
 
   const onSubmit: SubmitHandler<FieldValues> = (data): void => {
     delete data?.confirm;
-    dispatch(addUser(data));
+    dispatch(addUser(data as TRegister));
     navigate("/login");
   };
 

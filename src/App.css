@@ -36,7 +36,7 @@
 }
 .fields {
   display: flex;
-  width: 1000px;
+  width: 690px;
   align-items: center;
 }
 .fields input,
@@ -57,6 +57,7 @@ th {
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px !important;
   text-align: center !important;
   vertical-align: middle;
+  font-size: 14px;
 }
 td {
   text-align: center;
@@ -93,8 +94,14 @@ td a {
   font-weight: 600;
   word-spacing: 0.5px;
 }
-
+.novalidate-field {
+  display: flex;
+  justify-content: flex-start;
+}
 .alignment {
   display: flex !important;
   justify-content: center !important;
+}
+.page-item {
+  margin: 10px;
 }

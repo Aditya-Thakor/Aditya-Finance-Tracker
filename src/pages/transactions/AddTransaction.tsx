@@ -1,101 +1,56 @@
 import * as yup from "yup";
-import { Link, useNavigate } from "react-router-dom";
-import FormButton from "../../components/formfields/FormButton";
 import FormInputs from "../../components/formfields/FormInputs";
+import FormButton from "../../components/formfields/FormButton";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { addTransactionField } from "../../utils/const";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch } from "react-redux";
-import { addTransaction } from "../../redux/slices/transactionsSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { validAddTransaction } from "../../utils/yupValidations";
+import { imageBase64 } from "../../utils/helper";
+import { TransactionInterface } from "../../modals/transactions";
+import {
+  addTransaction,
+  deleteTransaction,
+} from "../../redux/slices/transactionsSlice";
 
 const AddTransaction = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { id } = useParams();
+  const [editData, setEditData] = useState<object>({});
   const transactionData = useSelector((state: RootState) => state.transactions);
 
-  const FILE_MAX_SIZE = 1024 * 1024;
-  const FILE_TYPE = ["image/jpg", "image/jpeg", "image/png"];
+  useEffect(() => {
+    if (id) {
+      transactionData.filter(
+        (transaction) =>
+          transaction.transactionId === parseInt(id) &&
+          setEditData(() => transaction)
+      );
+    }
+  }, []);
 
-  interface TAddTransaction {
-    transactionDate: Date;
-    transactionMY: string;
-    transactionAmount: number;
-    transactionNote: string;
-    transactionTo: string;
-    transactionFrom: string;
-    transactionType: string;
-    transactionReceipt: any;
-  }
-
-  const addSchema: yup.ObjectSchema<TAddTransaction> = yup.object().shape({
-    transactionDate: yup.date().required().typeError("Date is required"),
-    transactionMY: yup.string().required("Month/Year is Required"),
-    transactionAmount: yup
-      .number()
-      .required()
-      .typeError("Amount is Required")
-      .positive("Amount should be positive")
-      .integer("Amount should be integer"),
-    transactionNote: yup.string().required("Note is Required"),
-    transactionTo: yup.string().required("To is Required"),
-    transactionFrom: yup.string().required("From is Required"),
-    transactionType: yup.string().required("Type is Required"),
-    transactionReceipt: yup
-      .mixed()
-      .required()
-      .test("transactionReceipt", "Receipt is Required", (file: any) =>
-        file.length > 0 ? true : false
-      )
-      .test(
-        "transactionReceipt",
-        "Image Format should be JPEG/JPG/PNG",
-        (file: any) => {
-          if (file.length > 0) {
-            return FILE_TYPE.includes(file[0].type) ? true : false;
-          }
-        }
-      )
-      .test(
-        "transactionReceipt",
-        "Size should be less than 1MB",
-        (file: any): any => {
-          if (file.length > 0)
-            return FILE_MAX_SIZE > file[0].size ? true : false;
-        }
-      ),
-  });
-
+  const addSchema: yup.ObjectSchema<TransactionInterface> = validAddTransaction;
   const {
-    register,
     handleSubmit,
+    register,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(addSchema),
+    values: id ? editData : undefined,
   });
-
-  const imageBase64 = async (
-    file: FileList
-  ): Promise<string | ArrayBuffer | null> => {
-    const FILE = new FileReader();
-    FILE.readAsDataURL(file[0]);
-
-    return new Promise((resolve, rejects) => {
-      FILE.onloadend = () => {
-        resolve(FILE.result);
-      };
-    });
-  };
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     let filterData = { ...data };
 
     const dateobj = new Date(data.transactionDate);
-    let date: string | number = dateobj.getDate();
-    let month: string | number = dateobj.getMonth() + 1;
     const year = dateobj.getFullYear();
+    let month: string | number = dateobj.getMonth() + 1;
+    let date: string | number = dateobj.getDate();
 
     if (date < 10) date = "0" + date;
     if (month < 10) month = "0" + month;
@@ -106,7 +61,6 @@ const AddTransaction = () => {
     );
 
     const tlength = transactionData.length + 1;
-
     filterData = {
       ...filterData,
       transactionDate: tdate,
@@ -114,7 +68,8 @@ const AddTransaction = () => {
       transactionId: tlength,
     };
 
-    dispatch(addTransaction(filterData));
+    if (id) dispatch(deleteTransaction(parseInt(id)));
+    dispatch(addTransaction(filterData as TransactionInterface));
     navigate("/view-transactions");
   };
 

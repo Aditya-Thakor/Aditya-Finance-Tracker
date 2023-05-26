@@ -1,19 +1,13 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { TRegister } from "../../modals/register";
 
-interface obj {
-  username?: string;
-  password?: string;
-  email?: string;
-  confirm?: string;
-}
-
-const initialState: obj[] = [];
+const initialState: TRegister[] = [];
 
 const userSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    addUser: (state: obj[], action: PayloadAction<obj>) => {
+    addUser: (state, action: PayloadAction<TRegister>) => {
       void state.push(action.payload);
     },
   },

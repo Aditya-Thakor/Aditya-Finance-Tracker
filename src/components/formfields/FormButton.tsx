@@ -1,16 +1,6 @@
-import React, { FC } from "react";
-import { MouseEventHandler } from "react";
+import { ButtonProps } from "../../modals/formButton";
 
-type ButtonProps = {
-  name: string;
-  type: "submit" | "reset" | "button";
-  label: string;
-  value?: string;
-  className?: string;
-  onClick?: MouseEventHandler<any>;
-};
-
-const FormButton: FC<ButtonProps> = (props) => {
+const FormButton = (props: ButtonProps) => {
   const { label, className, value, name, type, onClick } = props;
 
   return (

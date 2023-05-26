@@ -2,7 +2,7 @@ import * as yup from "yup";
 import FormInputs from "../../components/formfields/FormInputs";
 import FormButton from "../../components/formfields/FormButton";
 import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -12,8 +12,8 @@ export const Login = () => {
   const navigate = useNavigate();
 
   type TLogin = {
-    email?: string;
-    password?: string;
+    email: string;
+    password: string;
   };
 
   const loginSchema: yup.ObjectSchema<TLogin> = yup.object().shape({
@@ -30,7 +30,7 @@ export const Login = () => {
     resolver: yupResolver(loginSchema),
   });
 
-  const onSubmit = (data: TLogin): void => {
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
     users.map((user, i) => {
       if (user.email === data.email && user.password === data.password) {
         navigate("/view-transactions");
@@ -48,7 +48,7 @@ export const Login = () => {
   return (
     <div>
       <div className="nav-link">
-        <Link to="/">Register</Link>
+        <Link to="/register">Register</Link>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInputs

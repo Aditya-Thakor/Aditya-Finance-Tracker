@@ -1,24 +1,5 @@
-import React, { FC } from "react";
-import { FieldErrors, UseFormRegister, FieldValues } from "react-hook-form";
+import { InputProps } from "../../modals/formInputs";
 
-type InputProps = {
-  label?: string;
-  name: string;
-  type: string;
-  className?: string;
-  placeholder?: string;
-  rows?: number;
-  cols?: number;
-  errors?: FieldErrors;
-  options?: object;
-  onchange?: React.ChangeEventHandler<unknown>;
-  register?: UseFormRegister<FieldValues>;
-};
-
-// const onchagetTesting = (e: any) => {
-//   type a = ReturnType<typeof e>;
-//   console.log(typeof a);
-// };
 const FormInputs = (props: InputProps) => {
   const {
     name,
